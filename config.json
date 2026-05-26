@@ -1,0 +1,64 @@
+{
+  "Índices USA": {
+    "#US30": [
+      "USD"
+    ],
+    "#USSPX500": [
+      "USD"
+    ],
+    "#USNDAQ100": [
+      "USD"
+    ]
+  },
+  "Índices Europa": {
+    "#Garmany40": [
+      "EUR"
+    ],
+    "#UK100": [
+      "GBP"
+    ],
+    "#france40": [
+      "EUR"
+    ]
+  },
+  "Metales & Energía": {
+    "XAUUSD": [
+      "USD"
+    ],
+    "XAGUSD": [
+      "USD"
+    ],
+    "WTI": [
+      "USD"
+    ]
+  },
+  "Cripto": {
+    "BTC": [
+      "USD"
+    ]
+  },
+  "Forex USD": {
+    "EURUSD": [
+      "EUR",
+      "USD"
+    ],
+    "GBPUSD": [
+      "GBP",
+      "USD"
+    ]
+  },
+  "Forex JPY": {
+    "USDJPY": [
+      "USD",
+      "JPY"
+    ],
+    "EURJPY": [
+      "EUR",
+      "JPY"
+    ],
+    "GBPJPY": [
+      "GBP",
+      "JPY"
+    ]
+  }
+}
