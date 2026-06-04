@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>ScalpingFilter - Pro Dashboard</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Outfit:wght@600&display=swap" rel="stylesheet"/>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-container-lowest": "#060e20",
+            "surface-container-low":    "#131b2e",
+            "surface-container":        "#171f33",
+            "surface-container-high":   "#222a3d",
+            "surface-container-highest":"#2d3449",
+            "surface":                  "#0b1326",
+            "surface-glass":            "rgba(30, 41, 59, 0.7)",
+            "surface-bright":           "#31394d",
+            "on-surface":               "#dae2fd",
+            "on-surface-variant":       "#c3c5d8",
+            "primary":                  "#b6c4ff",
+            "primary-container":        "#2962ff",
+            "secondary":                "#4edea3",
+            "secondary-container":      "#00a572",
+            "success-emerald":          "#10b981",
+            "danger-rose":              "#f43f5e",
+            "warning-amber":            "#f59e0b",
+            "background":               "#0b1326",
+            "outline-variant":          "#434656",
+          },
+          fontFamily: {
+            "mono-data":    ["JetBrains Mono", "monospace"],
+            "headline":     ["Outfit", "sans-serif"],
+            "body":         ["Inter", "sans-serif"],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    .font-headline { font-family: 'Outfit', sans-serif; }
+    .font-mono-data { font-family: 'JetBrains Mono', monospace; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #2d3449; border-radius: 9999px; }
+
+    /* Card hover glow */
+    .instrument-card { transition: border-color 0.2s, box-shadow 0.2s; }
+    .instrument-card:hover { border-color: rgba(182, 196, 255, 0.2) !important; }
+    .instrument-card.danger { animation: pulse-border 2s infinite; }
+    @keyframes pulse-border {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.2); }
+      50%       { box-shadow: 0 0 20px 4px rgba(244, 63, 94, 0.2); }
+    }
+
+    /* Filter tab */
+    .filter-tab { transition: background 0.15s, color 0.15s; }
+    .filter-tab.active { background: #2d3449; color: #dae2fd; }
+
+    /* News item hover */
+    .news-row { transition: background 0.15s; }
+    .news-row:hover { background: rgba(255,255,255,0.03); }
+
+    /* Sentiment bar */
+    .sentiment-bar { transition: width 0.6s ease; }
+
+    /* Loader pulse */
+    #loader { animation: fadeLoader 1.5s ease-in-out infinite; }
+    @keyframes fadeLoader {
+      0%, 100% { opacity: 0.5; }
+      50%       { opacity: 1; }
+    }
+    #loader.error { animation: none; color: #f43f5e; }
+  </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen antialiased">
+
+<!-- ─── TOP NAV ─────────────────────────────────────────────────────────────── -->
+<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-surface-glass backdrop-blur-xl border-b border-white/10">
+  <div class="flex items-center gap-8">
+    <div class="font-headline text-xl font-bold text-primary tracking-tighter">ScalpingFilter</div>
+    <div class="hidden md:flex gap-6 items-center pt-1">
+      <a class="text-xs font-bold text-primary border-b-2 border-primary pb-1 uppercase tracking-wider" href="#">Dashboard</a>
+      <a class="text-xs font-medium text-on-surface-variant pb-1 hover:text-primary transition-colors uppercase tracking-wider" href="#">History</a>
+      <a class="text-xs font-medium text-on-surface-variant pb-1 hover:text-primary transition-colors uppercase tracking-wider" href="#">Alerts</a>
+      <a class="text-xs font-medium text-on-surface-variant pb-1 hover:text-primary transition-colors uppercase tracking-wider" href="#">Settings</a>
+    </div>
+  </div>
+  <div class="flex items-center gap-3">
+    <div class="hidden lg:flex items-center gap-2 text-on-surface-variant font-mono-data text-sm">
+      <span class="material-symbols-outlined text-[18px]">public</span>
+      <span id="local-time">--:--:--</span>
+    </div>
+    <button class="p-2 text-on-surface-variant hover:text-primary transition-colors" title="Programado">
+      <span class="material-symbols-outlined">schedule</span>
+    </button>
+    <button id="btn-refresh" class="p-2 text-on-surface-variant hover:text-primary transition-colors" title="Actualizar ahora">
+      <span class="material-symbols-outlined">sync</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ─── MAIN CONTAINER ────────────────────────────────────────────────────────── -->
+<div class="pt-16 min-h-screen flex flex-col">
+
+  <!-- Contextual Header -->
+  <header class="px-6 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 bg-surface-container-lowest/50 backdrop-blur-sm">
+    <div>
+      <h1 class="font-headline text-2xl md:text-3xl font-semibold text-on-surface mb-1">Estado de Instrumentos</h1>
+      <p class="text-sm text-on-surface-variant flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-success-emerald animate-pulse"></span>
+        Terminal En Línea
+        <span class="text-outline-variant mx-1">·</span>
+        <span class="font-mono-data text-xs" id="last-sync-label">Sincronizando...</span>
+      </p>
+    </div>
+    <div class="flex flex-col items-center justify-center bg-surface-container-high px-7 py-3 rounded-2xl border border-warning-amber/30 shadow-[0_0_30px_rgba(245,158,11,0.08)] min-w-[160px]">
+      <span class="text-xs font-bold text-warning-amber mb-1 flex items-center gap-1 uppercase tracking-wider">
+        <span class="material-symbols-outlined text-[16px]">hourglass_empty</span> Próxima actualización
+      </span>
+      <span id="refresh-time" class="font-mono-data text-5xl leading-none text-warning-amber font-bold tracking-tight">05:00</span>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 px-6 py-6 flex flex-col gap-8 max-w-[1440px] mx-auto w-full">
+
+    <!-- ── Instruments Section ──────────────────────────────────────────────── -->
+    <section>
+      <!-- Toolbar -->
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 gap-3">
+        <div class="flex items-center gap-1 bg-surface-glass backdrop-blur-md rounded-lg p-1 border border-white/5">
+          <button class="filter-tab active px-4 py-1.5 rounded-md text-xs font-bold tracking-wider uppercase" id="filter-all" onclick="setFilter('all')">Ver Todos</button>
+          <button class="filter-tab px-4 py-1.5 rounded-md text-on-surface-variant text-xs font-bold tracking-wider uppercase" id="filter-affected" onclick="setFilter('affected')">Ocultar Afectados</button>
+          <button class="filter-tab px-4 py-1.5 rounded-md text-on-surface-variant text-xs font-bold tracking-wider uppercase" id="filter-safe" onclick="setFilter('safe')">Solo Seguros</button>
+        </div>
+        <div class="flex items-center gap-1 bg-surface-glass backdrop-blur-md rounded-lg p-1 border border-white/5">
+          <button class="p-1.5 rounded-md bg-surface-container-highest text-primary shadow-sm">
+            <span class="material-symbols-outlined text-[20px]">grid_view</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Loader -->
+      <div id="loader" class="text-center py-16 text-on-surface-variant text-sm">Cargando datos del mercado...</div>
+
+      <!-- Groups Container -->
+      <div id="instruments-container" style="display:none;"></div>
+    </section>
+
+    <!-- ── Bottom Grid: Sentiment + News ───────────────────────────────────── -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+      <!-- Sentiment -->
+      <div class="bg-surface-glass backdrop-blur-md rounded-xl p-6 border border-white/5 flex flex-col gap-5">
+        <h2 class="font-headline text-lg text-on-surface flex items-center gap-2">
+          <span class="material-symbols-outlined text-secondary">trending_up</span> Sentiment
+        </h2>
+        <div id="sentiment-section">
+          <div class="flex justify-between px-14 text-[10px] font-bold tracking-wider text-on-surface-variant mb-2 uppercase">
+            <span class="text-success-emerald">Alcista</span>
+            <span class="text-danger-rose">Bajista</span>
+          </div>
+          <div id="sentiment-bars" class="flex flex-col gap-3">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Market News -->
+      <div class="bg-surface-glass backdrop-blur-md rounded-xl p-6 border border-white/5 flex flex-col">
+        <div class="flex items-center gap-3 mb-5 pb-4 border-b border-white/5">
+          <span class="material-symbols-outlined text-danger-rose">campaign</span>
+          <h2 class="font-headline text-lg text-on-surface">Market News (Alto Impacto)</h2>
+        </div>
+        <div id="news-list" class="flex flex-col gap-2"></div>
+      </div>
+
+    </section>
+  </main>
+</div>
+
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>

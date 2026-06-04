@@ -47,13 +47,16 @@ try {
 
 // ─── 4. Estado interno ────────────────────────────────────────────────────────
 const DANGER_WINDOW_MINUTES = 60;
+const EVAL_INTERVAL_MINUTES = 5;
 let instrumentState = {};
 let latestNews = [];
+let lastEvalTime = null;
 let frontendState = {
   lastUpdate: null,
   groups: GROUPS,
   dangerCurrencies: [],
   todayNews: [],
+  nextEvalIn: null,
   error: null
 };
 
@@ -200,11 +203,13 @@ async function evaluateState() {
     });
   });
 
+  lastEvalTime = new Date();
   frontendState = {
-    lastUpdate: new Date().toISOString(),
+    lastUpdate: lastEvalTime.toISOString(),
     groups: GROUPS,
     dangerCurrencies: Array.from(dangerCurrencies),
     todayNews: todayNews,
+    nextEvalIn: EVAL_INTERVAL_MINUTES * 60,
     error: null
   };
 
@@ -272,8 +277,28 @@ cron.schedule('*/5 * * * *', () => {
 });
 
 // ─── 10. Endpoints de la API ──────────────────────────────────────────────────
+
+// Devuelve el estado actual con countdown real hasta la próxima evaluación
 app.get('/api/state', (req, res) => {
-  res.json(frontendState);
+  const now = new Date();
+  let nextEvalIn = EVAL_INTERVAL_MINUTES * 60; // default
+  if (lastEvalTime) {
+    const elapsed = Math.floor((now - lastEvalTime) / 1000);
+    nextEvalIn = Math.max(0, EVAL_INTERVAL_MINUTES * 60 - elapsed);
+  }
+  res.json({ ...frontendState, nextEvalIn });
+});
+
+// Devuelve la configuración de grupos e instrumentos para el frontend
+app.get('/api/config', (req, res) => {
+  // Construye la lista de instrumentos con metadatos para el dashboard
+  const instruments = [];
+  Object.entries(GROUPS).forEach(([groupName, groupInstruments]) => {
+    Object.entries(groupInstruments).forEach(([ticker, currencies]) => {
+      instruments.push({ ticker, groupName, currencies });
+    });
+  });
+  res.json({ groups: GROUPS, instruments });
 });
 
 // Endpoint de diagnóstico (útil para debuggear)
@@ -297,8 +322,18 @@ app.get('/api/debug', async (req, res) => {
   }
 });
 
-// ─── 11. Archivos estáticos (build de producción) ─────────────────────────────
-app.use(express.static(path.join(__dirname, 'dist')));
+// ─── 11. Archivos estáticos (build de producción Next.js export) ──────────────
+app.use(express.static(path.join(__dirname, 'out')));
+
+// Catch-all: para rutas de Next.js static export, sirve index.html
+app.get('/{*path}', (req, res) => {
+  const indexPath = path.join(__dirname, 'out', 'index.html');
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(503).json({ error: 'Frontend no compilado. Ejecuta npm run build.' });
+  }
+});
 
 // ─── 12. Arrancar servidor y hacer evaluación inicial ─────────────────────────
 const PORT = process.env.PORT || 3000;
