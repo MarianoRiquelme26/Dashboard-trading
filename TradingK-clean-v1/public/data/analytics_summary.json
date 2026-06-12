@@ -1,0 +1,10 @@
+{
+  "schema_version": "analytics_summary.v1",
+  "generated_at_utc": null,
+  "source_status": "EMPTY",
+  "source_name": "pending_trade_results",
+  "stale_after_seconds": 3600,
+  "error_message": null,
+  "blocked_reason": "Analytics bloqueado hasta tener trade_results confiables.",
+  "items": []
+}

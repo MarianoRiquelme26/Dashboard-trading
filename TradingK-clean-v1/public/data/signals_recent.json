@@ -1,0 +1,9 @@
+{
+  "schema_version": "signals_recent.v1",
+  "generated_at_utc": null,
+  "source_status": "EMPTY",
+  "source_name": "pending_snapshot",
+  "stale_after_seconds": 900,
+  "error_message": null,
+  "items": []
+}

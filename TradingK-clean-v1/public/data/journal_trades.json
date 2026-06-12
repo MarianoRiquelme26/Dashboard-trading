@@ -1,0 +1,9 @@
+{
+  "schema_version": "journal_trades.v1",
+  "generated_at_utc": null,
+  "source_status": "EMPTY",
+  "source_name": "pending_trade_ingest",
+  "stale_after_seconds": 3600,
+  "error_message": null,
+  "items": []
+}

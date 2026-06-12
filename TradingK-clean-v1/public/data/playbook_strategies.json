@@ -1,0 +1,108 @@
+{
+  "schema_version": "playbook_strategies.v1",
+  "generated_at_utc": null,
+  "source_status": "PARTIAL",
+  "source_name": "tradingk_rules_seed",
+  "stale_after_seconds": 86400,
+  "error_message": null,
+  "items": [
+    {
+      "strategy_id": "puertas_del_cielo",
+      "name": "Puertas del Cielo",
+      "rules": [
+        {
+          "section": "Contexto D1",
+          "description": "Precio no alejado de EMA8, dentro de Bollinger, EMAs alineadas/anguladas, bandwidth mediano o creciente."
+        },
+        {
+          "section": "Disparo H1",
+          "description": "Apertura de Bollinger en ambos lados, EMAs alineadas/anguladas, vela direccional rompe y cierra fuera de banda."
+        },
+        {
+          "section": "Operativa",
+          "description": "Entrada en banda, SL entre vela de quiebre y EMA8, TP 1.3R."
+        }
+      ]
+    },
+    {
+      "strategy_id": "sixjetset",
+      "name": "SixJetSet",
+      "rules": [
+        {
+          "section": "Contexto D1",
+          "description": "Precio no alejado de EMA8, EMAs alineadas/anguladas."
+        },
+        {
+          "section": "Disparo",
+          "description": "Precio rompe EMAs, vela cerrada por encima/debajo de todas las EMAs, confirmacion AO/K-Energy."
+        },
+        {
+          "section": "Operativa",
+          "description": "Entrada cerca de EMA8, SL maximo/minimo anterior, TP 1.3R."
+        }
+      ]
+    },
+    {
+      "strategy_id": "simpleflow",
+      "name": "SimpleFlow",
+      "rules": [
+        {
+          "section": "Contexto D1",
+          "description": "Precio no alejado de EMA8, EMAs alineadas/anguladas."
+        },
+        {
+          "section": "H1",
+          "description": "EMAs alineadas/anguladas, sin divergencia."
+        },
+        {
+          "section": "Fibo",
+          "description": "Base 1 entrada 50, SL 100, TP -21. Base 2 entrada 61.8, SL 100, TP 0."
+        }
+      ]
+    },
+    {
+      "strategy_id": "pendulo_1",
+      "name": "Pendulo 1",
+      "rules": [
+        {
+          "section": "D1",
+          "description": "Precio alejado de EMA8, metido entre EMAs, EMAs alineadas/anguladas."
+        },
+        {
+          "section": "H1",
+          "description": "EMAs alineadas/anguladas, con divergencia."
+        },
+        {
+          "section": "Fibo",
+          "description": "Fibo hacia EMA8 D1. Base 1 entrada 121, SL 155, TP 61.8. Base 2 entrada 134, SL 155, TP 100. Riesgo 1%."
+        }
+      ]
+    },
+    {
+      "strategy_id": "pendulo_2_3",
+      "name": "Pendulo 2 / 3",
+      "rules": [
+        {
+          "section": "D1",
+          "description": "Precio alejado de EMA8."
+        },
+        {
+          "section": "P3",
+          "description": "EMAs alineadas/anguladas."
+        },
+        {
+          "section": "P2",
+          "description": "EMAs sin alineacion ni angulacion."
+        },
+        {
+          "section": "H1",
+          "description": "EMAs alineadas/anguladas, con divergencia."
+        },
+        {
+          "section": "Operativa",
+          "description": "Base 1 entrada 121, SL 155, TP 76. Base 2 entrada 134, SL 155, TP 100. Riesgo P2 1%, P3 0.7%."
+        }
+      ]
+    }
+  ]
+}

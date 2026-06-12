@@ -1,0 +1,11 @@
+{
+  "schema_version": "system_status.v1",
+  "generated_at_utc": null,
+  "source_status": "EMPTY",
+  "source_name": "pending_snapshot",
+  "stale_after_seconds": 900,
+  "error_message": null,
+  "overall_status": "unknown",
+  "services": [],
+  "recent_errors": []
+}
