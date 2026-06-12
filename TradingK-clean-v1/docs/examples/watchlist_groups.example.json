@@ -1,0 +1,20 @@
+{
+  "schema_version": "watchlist_groups.v1",
+  "generated_at_utc": "2026-06-12T17:30:00Z",
+  "source_status": "REAL",
+  "source_name": "watchlist_snapshot",
+  "stale_after_seconds": 3600,
+  "error_message": null,
+  "items": [
+    {
+      "group_id": "majors_usd",
+      "group_name": "Majors USD",
+      "asset_symbols": ["EURUSD", "GBPUSD", "USDJPY"],
+      "news_currencies": ["USD", "EUR", "GBP", "JPY"],
+      "correlation_theme": "USD macro",
+      "priority": 1,
+      "is_active": true,
+      "notes": "Grupo principal para noticias de alto impacto USD."
+    }
+  ]
+}

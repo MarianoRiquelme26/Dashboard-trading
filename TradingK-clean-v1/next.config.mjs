@@ -1,10 +1,11 @@
-/** @type {import('next').NextConfig} */
+/** @type {import("next").NextConfig} */
 
-const isDev = process.env.NODE_ENV === 'development'
+const isDev = process.env.NODE_ENV === "development"
 
 const nextConfig = {
-  // Solo aplicamos export estático en producción (Render)
-  ...(isDev ? {} : { output: 'export', distDir: 'out' }),
+  // Solo aplicamos export estatico en produccion (Render).
+  ...(isDev ? {} : { output: "export", distDir: "out" }),
+  allowedDevOrigins: ["*.trycloudflare.com"],
   images: {
     unoptimized: true,
   },

@@ -11,7 +11,7 @@ export function DashboardView() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h2 className="font-heading text-2xl font-semibold text-foreground">Dashboard</h2>
-          <p className="text-muted-foreground">Vista rapida del sistema, noticias y ultimas senales.</p>
+          <p className="text-muted-foreground">Vista rápida del sistema, noticias y últimas señales.</p>
         </div>
       </div>
 

@@ -11,18 +11,28 @@ interface NavigationContextType {
   setSidebarCollapsed: (value: boolean) => void
   signalEventIdFilter: string | null
   openSignal: (eventId?: string | null) => void
+  clearSignalFilter: () => void
 }
 
 const NavigationContext = createContext<NavigationContextType | undefined>(undefined)
 
 export function NavigationProvider({ children }: { children: ReactNode }) {
-  const [currentView, setCurrentView] = useState<View>("dashboard")
+  const [currentView, setCurrentViewState] = useState<View>("dashboard")
   const [isSidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [signalEventIdFilter, setSignalEventIdFilter] = useState<string | null>(null)
 
+  function setCurrentView(view: View) {
+    setSignalEventIdFilter(null)
+    setCurrentViewState(view)
+  }
+
   function openSignal(eventId?: string | null) {
     setSignalEventIdFilter(eventId ?? null)
-    setCurrentView("signals")
+    setCurrentViewState("signals")
+  }
+
+  function clearSignalFilter() {
+    setSignalEventIdFilter(null)
   }
 
   return (
@@ -34,6 +44,7 @@ export function NavigationProvider({ children }: { children: ReactNode }) {
         setSidebarCollapsed,
         signalEventIdFilter,
         openSignal,
+        clearSignalFilter,
       }}
     >
       {children}

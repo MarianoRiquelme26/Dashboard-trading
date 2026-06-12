@@ -1,0 +1,59 @@
+{
+  "schema_version": "journal_trades.v1",
+  "generated_at_utc": "2026-06-12T17:30:00Z",
+  "source_status": "REAL",
+  "source_name": "trade_ingest_v1_fixture",
+  "stale_after_seconds": 3600,
+  "error_message": null,
+  "items": [
+    {
+      "trade_id": "tr-001",
+      "platform": "cTrader",
+      "environment": "test",
+      "symbol": "EURUSD",
+      "direction": "BUY",
+      "strategy_name": "SixJetSet",
+      "entry_time_utc": "2026-06-12T17:18:00Z",
+      "entry_price": 1.0854,
+      "initial_sl_price": 1.0812,
+      "initial_tp_price": 1.0904,
+      "trade_status": "open",
+      "linked_signal": {
+        "event_id": "sig-001",
+        "link_status": "auto_linked",
+        "link_confidence": 0.94
+      }
+    },
+    {
+      "trade_id": "tr-002",
+      "platform": "cTrader",
+      "environment": "test",
+      "symbol": "GBPUSD",
+      "direction": "SELL",
+      "strategy_name": "SimpleFlow",
+      "entry_time_utc": "2026-06-12T16:02:00Z",
+      "entry_price": 1.271,
+      "initial_sl_price": 1.276,
+      "initial_tp_price": 1.2645,
+      "trade_status": "closed",
+      "linked_signal": {
+        "event_id": "sig-002",
+        "link_status": "auto_linked",
+        "link_confidence": 0.91
+      },
+      "result": {
+        "closed_at_utc": "2026-06-12T16:45:00Z",
+        "exit_price": 1.2645,
+        "result_r": 1.3,
+        "net_profit": 120.5,
+        "commission": 3.2,
+        "swap": 0
+      },
+      "review": {
+        "mistake_type": null,
+        "rule_compliance_score": 95,
+        "journal_notes": "Ejecucion dentro del plan."
+      }
+    }
+  ]
+}

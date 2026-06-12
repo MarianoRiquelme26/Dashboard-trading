@@ -1,16 +1,16 @@
-import type { SnapshotRecord } from "@/types/snapshots"
+import type { SignalBoardItem } from "@/types/snapshots"
 
-function countBy(items: SnapshotRecord["items"], key: string, value: string) {
-  return items.filter((item) => item[key] === value).length
+function countBy(items: SignalBoardItem[], predicate: (item: SignalBoardItem) => boolean) {
+  return items.filter(predicate).length
 }
 
-export function SignalsSummary({ items }: { items: SnapshotRecord["items"] }) {
+export function SignalsSummary({ items }: { items: SignalBoardItem[] }) {
   const cards = [
-    ["Total senales", items.length],
-    ["Pendientes", countBy(items, "operation_status", "pending")],
-    ["Tomadas", countBy(items, "operation_status", "taken")],
-    ["Sin vincular", countBy(items, "operation_status", "unlinked")],
-    ["Errores", countBy(items, "signal_status", "error")],
+    ["Total señales", items.length],
+    ["Pendientes", countBy(items, (item) => item.operation_status === "pending")],
+    ["Tomadas", countBy(items, (item) => item.operation_status === "taken")],
+    ["Sin vincular", countBy(items, (item) => item.linked_trade == null)],
+    ["Errores", countBy(items, (item) => item.signal_status === "error")],
   ] as const
 
   return (

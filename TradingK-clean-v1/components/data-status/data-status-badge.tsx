@@ -21,7 +21,7 @@ interface DataStatusBadgeProps {
 export function DataStatusBadge({ status, label, generatedAtUtc, className }: DataStatusBadgeProps) {
   return (
     <span
-      title={generatedAtUtc ? `Ultimo snapshot: ${formatSnapshotTime(generatedAtUtc)}` : undefined}
+      title={generatedAtUtc ? `Último snapshot: ${formatSnapshotTime(generatedAtUtc)}` : undefined}
       className={cn(
         "inline-flex items-center gap-1 rounded-md border px-2 py-1 text-[11px] font-semibold uppercase tracking-wide",
         statusClasses[status],

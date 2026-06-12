@@ -12,6 +12,7 @@ import {
   Moon,
   RadioTower,
   Sun,
+  Menu,
 } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
@@ -37,9 +38,36 @@ export function Sidebar() {
   }, [])
 
   return (
+    <>
+    <header className="fixed inset-x-0 top-0 z-50 flex h-16 items-center justify-between border-b border-border bg-sidebar px-4 md:hidden">
+      <div className="flex items-center gap-3">
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/15">
+          <Activity className="h-5 w-5 text-primary" />
+        </div>
+        <div>
+          <h1 className="font-heading text-base font-semibold text-foreground">TradingK</h1>
+          <p className="text-[11px] text-muted-foreground">Snapshot Console</p>
+        </div>
+      </div>
+      <div className="flex items-center gap-2 overflow-x-auto">
+        <Menu className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+        <select
+          aria-label="Navegacion principal"
+          value={currentView}
+          onChange={(event) => setCurrentView(event.target.value as View)}
+          className="rounded-md border border-border bg-card px-2 py-1 text-sm text-foreground"
+        >
+          {navItems.map((item) => (
+            <option key={item.id} value={item.id}>
+              {item.label}
+            </option>
+          ))}
+        </select>
+      </div>
+    </header>
     <aside
       className={cn(
-        "fixed left-0 top-0 z-50 flex h-screen flex-col border-r border-border bg-sidebar transition-all duration-300",
+        "fixed left-0 top-0 z-50 hidden h-screen flex-col border-r border-border bg-sidebar transition-all duration-300 md:flex",
         isSidebarCollapsed ? "w-20" : "w-64",
       )}
     >
@@ -105,10 +133,11 @@ export function Sidebar() {
             isSidebarCollapsed ? "justify-center px-0" : "px-4",
           )}
         >
-          {mounted && theme === "dark" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+          {mounted && (theme === "dark" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />)}
           {!isSidebarCollapsed && <span>Theme</span>}
         </button>
       </div>
     </aside>
+    </>
   )
 }

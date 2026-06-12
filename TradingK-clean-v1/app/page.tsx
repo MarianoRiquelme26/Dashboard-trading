@@ -14,7 +14,12 @@ function MainContent() {
   const { currentView, isSidebarCollapsed } = useNavigation()
 
   return (
-    <main className={cn("min-h-screen p-5 transition-all duration-300 md:p-8", isSidebarCollapsed ? "ml-20" : "ml-64")}>
+    <main
+      className={cn(
+        "min-h-screen p-4 pt-20 transition-all duration-300 sm:p-5 sm:pt-20 md:p-8 md:pt-8",
+        isSidebarCollapsed ? "md:ml-20" : "md:ml-64",
+      )}
+    >
       {currentView === "dashboard" && <DashboardView />}
       {currentView === "signals" && <SignalsView />}
       {currentView === "journal" && <JournalView />}

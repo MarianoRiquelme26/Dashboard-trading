@@ -1,30 +1,51 @@
 "use client"
 
-import type { SnapshotRecord } from "@/types/snapshots"
-import { SignalRow, signalGrid } from "./signal-row"
+import type { SignalBoardItem } from "@/types/snapshots"
+import { SignalMobileCard, SignalRow, signalGrid } from "./signal-row"
 
-const headers = ["Hora senal", "Bot", "Estrategia", "Simbolo", "TF", "Direccion", "Score", "Entrada", "SL", "TP", "Telegram", "Estado", "Trade"]
+const headers = [
+  "Hora",
+  "Bot",
+  "Estrategia",
+  "Símbolo",
+  "TF",
+  "Dirección",
+  "Score",
+  "Entrada",
+  "SL",
+  "TP",
+  "Telegram",
+  "Estado",
+  "Trade",
+  "Acción",
+]
 
 export function SignalsTable({
   items,
   selectedId,
   onSelect,
 }: {
-  items: SnapshotRecord["items"]
+  items: SignalBoardItem[]
   selectedId: string | null
-  onSelect: (signal: SnapshotRecord["items"][number]) => void
+  onSelect: (signal: SignalBoardItem) => void
 }) {
   return (
-    <div className="overflow-x-auto rounded-lg border border-border">
-      <div className={`grid min-w-[1280px] gap-3 bg-secondary/50 px-4 py-3 text-[11px] uppercase tracking-wide text-muted-foreground ${signalGrid}`}>
-        {headers.map((header) => (
-          <div key={header}>{header}</div>
+    <>
+      <div className="hidden overflow-x-auto rounded-lg border border-border md:block">
+        <div className={`grid min-w-[1420px] gap-3 bg-secondary/50 px-4 py-3 text-[11px] uppercase tracking-wide text-muted-foreground ${signalGrid}`}>
+          {headers.map((header) => (
+            <div key={header}>{header}</div>
+          ))}
+        </div>
+        {items.map((signal) => (
+          <SignalRow key={signal.event_id} signal={signal} selected={selectedId === signal.event_id} onSelect={() => onSelect(signal)} />
         ))}
       </div>
-      {items.map((signal, index) => {
-        const id = typeof signal.event_id === "string" ? signal.event_id : `signal-${index}`
-        return <SignalRow key={id} signal={signal} selected={selectedId === id} onSelect={() => onSelect(signal)} />
-      })}
-    </div>
+      <div className="space-y-3 md:hidden">
+        {items.map((signal) => (
+          <SignalMobileCard key={signal.event_id} signal={signal} selected={selectedId === signal.event_id} onSelect={() => onSelect(signal)} />
+        ))}
+      </div>
+    </>
   )
 }

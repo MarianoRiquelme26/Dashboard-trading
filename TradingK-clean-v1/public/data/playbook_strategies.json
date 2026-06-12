@@ -37,6 +37,10 @@
           "description": "Precio rompe EMAs, vela cerrada por encima/debajo de todas las EMAs, confirmacion AO/K-Energy."
         },
         {
+          "section": "Timing",
+          "description": "Entrada dentro de los primeros tres histogramas de K-Energy/AO cuando aplique."
+        },
+        {
           "section": "Operativa",
           "description": "Entrada cerca de EMA8, SL maximo/minimo anterior, TP 1.3R."
         }
@@ -57,6 +61,10 @@
         {
           "section": "Fibo",
           "description": "Base 1 entrada 50, SL 100, TP -21. Base 2 entrada 61.8, SL 100, TP 0."
+        },
+        {
+          "section": "Proteccion",
+          "description": "SL protegido por EMAs. Idealmente tambien protegido por EMA50."
         }
       ]
     },
@@ -75,6 +83,14 @@
         {
           "section": "Fibo",
           "description": "Fibo hacia EMA8 D1. Base 1 entrada 121, SL 155, TP 61.8. Base 2 entrada 134, SL 155, TP 100. Riesgo 1%."
+        },
+        {
+          "section": "Divergencia",
+          "description": "Fibo desde la vela de inicio de divergencia. Direccion del fibo hacia EMA8 en D1. Ajustar fibo si aparece nuevo maximo/minimo durante la divergencia."
+        },
+        {
+          "section": "Proteccion",
+          "description": "SL protegido por EMAs."
         }
       ]
     },
@@ -101,6 +117,14 @@
         {
           "section": "Operativa",
           "description": "Base 1 entrada 121, SL 155, TP 76. Base 2 entrada 134, SL 155, TP 100. Riesgo P2 1%, P3 0.7%."
+        },
+        {
+          "section": "Fibo",
+          "description": "Fibo hacia EMA8 en D1. Ajustar fibo si aparece un nuevo extremo durante la divergencia."
+        },
+        {
+          "section": "Proteccion",
+          "description": "SL protegido por EMAs de D1 y H1."
         }
       ]
     }

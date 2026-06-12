@@ -38,24 +38,33 @@ export function resolveSnapshotStatus(snapshot: SnapshotBase, now = Date.now()):
 }
 
 export function formatSnapshotTime(value: string | null | undefined) {
+  return formatArgTime(value)
+}
+
+export function formatArgTime(value: string | null | undefined) {
   if (!value) return "sin generar"
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return "fecha invalida"
-  return date.toLocaleString("es-AR", {
-    dateStyle: "short",
-    timeStyle: "medium",
-    timeZone: "UTC",
-  })
+  const formatted = new Intl.DateTimeFormat("es-AR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "America/Argentina/Buenos_Aires",
+  }).format(date)
+  return `${formatted.replace(",", "")} ARG`
 }
 
 export function getStatusDescription(status: DataSourceStatus) {
   const descriptions: Record<DataSourceStatus, string> = {
-    REAL: "Snapshot valido desde fuente real.",
+    REAL: "Snapshot válido desde fuente real.",
     PARTIAL: "Dato real incompleto.",
     MOCK: "Dato placeholder. No usar como real.",
     EMPTY: "Fuente real o pendiente sin registros.",
     ERROR: "No se pudo cargar o interpretar el snapshot.",
-    STALE: "Snapshot vencido segun stale_after_seconds.",
+    STALE: "Snapshot vencido según stale_after_seconds.",
   }
   return descriptions[status]
 }

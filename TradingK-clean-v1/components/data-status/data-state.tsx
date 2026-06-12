@@ -1,7 +1,7 @@
 import type { DataSourceStatus } from "@/types/snapshots"
 import { EmptyState } from "./empty-state"
 import { ErrorState } from "./error-state"
-import { StaleState } from "./stale-state"
+import { StaleBanner } from "./stale-state"
 
 interface DataStateProps {
   status: DataSourceStatus
@@ -21,7 +21,11 @@ export function DataState({
   children,
 }: DataStateProps) {
   if (status === "ERROR") return <ErrorState message={error} />
-  if (status === "STALE") return <StaleState generatedAtUtc={generatedAtUtc} />
   if (status === "EMPTY") return <EmptyState title={emptyTitle} description={emptyDescription} />
-  return <>{children}</>
+  return (
+    <>
+      {status === "STALE" && <StaleBanner generatedAtUtc={generatedAtUtc} />}
+      {children}
+    </>
+  )
 }

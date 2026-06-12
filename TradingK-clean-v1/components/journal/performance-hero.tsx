@@ -8,7 +8,7 @@ export function PerformanceHero({ status }: { status: DataSourceStatus }) {
         <div>
           <h3 className="font-heading text-lg font-semibold text-foreground">Journal real</h3>
           <p className="mt-1 text-sm text-muted-foreground">
-            Metricas de performance ocultas hasta que existan operaciones reales y resultados confiables.
+            Métricas de performance ocultas hasta que existan operaciones reales y resultados confiables.
           </p>
         </div>
         <DataStatusBadge status={status} />

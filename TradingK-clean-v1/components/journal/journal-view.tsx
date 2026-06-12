@@ -4,12 +4,15 @@ import { DataState } from "@/components/data-status/data-state"
 import { DataStatusBadge } from "@/components/data-status/data-status-badge"
 import { useSnapshot } from "@/lib/data/load-json"
 import { formatSnapshotTime } from "@/lib/data/status"
-import type { SnapshotRecord } from "@/types/snapshots"
+import { isJournalTradesSnapshot } from "@/lib/data/validators"
+import type { JournalTradesSnapshot } from "@/types/snapshots"
 import { PerformanceHero } from "./performance-hero"
 import { TradeTable } from "./trade-table"
 
 export function JournalView() {
-  const { data, status, error, isLoading } = useSnapshot<SnapshotRecord>("/data/journal_trades.json")
+  const { data, status, error, isLoading } = useSnapshot<JournalTradesSnapshot>("/data/journal_trades.json", {
+    validate: isJournalTradesSnapshot,
+  })
   const items = data?.items ?? []
 
   return (
@@ -21,7 +24,7 @@ export function JournalView() {
             <DataStatusBadge status={status} generatedAtUtc={data?.generated_at_utc} />
           </div>
           <p className="text-muted-foreground">Solo operaciones tomadas. No es inventario de oportunidades.</p>
-          <p className="mt-1 text-xs text-muted-foreground">Ultimo snapshot: {formatSnapshotTime(data?.generated_at_utc)}</p>
+          <p className="mt-1 text-xs text-muted-foreground">Último snapshot: {formatSnapshotTime(data?.generated_at_utc)}</p>
         </div>
       </div>
 
@@ -35,7 +38,7 @@ export function JournalView() {
           error={error}
           generatedAtUtc={data?.generated_at_utc}
           emptyTitle="Journal EMPTY"
-          emptyDescription="No hay operaciones reales registradas. Cuando trade_ingest_v1 este activo, aca apareceran operaciones tomadas."
+          emptyDescription="No hay operaciones reales registradas. Cuando trade_ingest_v1 esté activo, acá aparecerán operaciones tomadas."
         >
           <TradeTable items={items} />
         </DataState>

@@ -1,0 +1,39 @@
+{
+  "schema_version": "system_status.v1",
+  "generated_at_utc": "2026-06-12T17:30:00Z",
+  "source_status": "REAL",
+  "source_name": "snapshot_generator",
+  "stale_after_seconds": 900,
+  "error_message": null,
+  "overall_status": "warning",
+  "services": [
+    {
+      "name": "n8n",
+      "status": "ok",
+      "last_seen_utc": "2026-06-12T17:29:00Z",
+      "message": "Workflow activo."
+    },
+    {
+      "name": "sqlite",
+      "status": "warning",
+      "last_insert_utc": "2026-06-12T17:10:00Z",
+      "message": "Sin inserts recientes."
+    },
+    {
+      "name": "snapshot_generator",
+      "status": "error",
+      "last_generated_utc": "2026-06-12T17:30:00Z",
+      "message": "Ultima corrida con errores parciales."
+    }
+  ],
+  "recent_errors": [
+    {
+      "level": "error",
+      "component": "snapshot_generator",
+      "message": "No se pudo leer una fila de conditions.",
+      "created_at_utc": "2026-06-12T17:25:00Z",
+      "related_event_id": "sig-003"
+    }
+  ],
+  "items": []
+}
