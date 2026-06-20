@@ -66,3 +66,14 @@
 - No se realizo deploy en esta tarea. El smoke contra `https://dashboard-trading-1.onrender.com/` debe repetirse despues del deploy de esta version.
 - La prueba ERROR usa una respuesta `500` interceptada localmente para validar el estado terminal; no representa falla real del backend.
 - Las capturas REAL usan fixtures controladas desde `docs/examples/` y no se copiaron a `public/data`, para mantener `public/data` como snapshots de produccion/local reales.
+
+## Verificación posterior en Render - 2026-06-19
+
+- Deploy verificado en `https://dashboard-trading-1.onrender.com/`: HTTP 200 y aplicación `TradingK-clean-v1` visible.
+- Dashboard, Signals, Journal, Analytics, Watchlist y Playbook navegables en el deploy publicado.
+- Consola sin errores ni warnings durante el recorrido de las vistas.
+- Los siete snapshots públicos responden HTTP 200: `signals_recent`, `signals_board`, `journal_trades`, `system_status`, `analytics_summary`, `watchlist_groups` y `playbook_strategies`.
+- Desktop 1440 px: sidebar y contenido sin solapamiento.
+- Tablet 768 px: layout sin overflow horizontal del documento.
+- Mobile 375 px: sidebar oculta, header móvil visible, selector de navegación funcional y documento sin overflow horizontal.
+- Los estados EMPTY se muestran de forma controlada y sin datos financieros inventados.
