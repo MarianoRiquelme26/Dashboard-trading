@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react"
 import type { SnapshotMeta, SnapshotQueryResult, UiDataStatus } from "@/types/snapshots"
 import {
   fetchJournalTrades,
+  fetchSignalTradeLinks,
   fetchSignalsBoard,
   fetchSignalsRecent,
   fetchSystemStatus,
@@ -64,6 +65,10 @@ export function useSignalsBoard() {
 
 export function useJournalTrades() {
   return useSnapshotQuery(fetchJournalTrades, 90_000)
+}
+
+export function useSignalTradeLinks() {
+  return useSnapshotQuery(fetchSignalTradeLinks, 90_000)
 }
 
 export function useSystemStatus() {

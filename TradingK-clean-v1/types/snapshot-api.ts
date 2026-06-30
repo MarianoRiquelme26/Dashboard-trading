@@ -1,3 +1,26 @@
+export interface RawSnapshotEnvelope<TItem = unknown> {
+  schema_version?: string | null
+  generated_at_utc?: string | null
+  source_status?: "OK" | "EMPTY" | "STALE" | "ERROR" | "PARTIAL" | string | null
+  snapshot_stale_after_seconds?: number | null
+  snapshot_age_seconds?: number | null
+  snapshot_status?: string | null
+  error_message?: string | null
+  items?: TItem[] | null
+}
+
+export interface SnapshotResponseMeta {
+  headerGeneratedAtUtc?: string | null
+  headerAgeSeconds?: number | null
+  headerStaleAfterSeconds?: number | null
+  headerStatus?: string | null
+}
+
+export interface SnapshotResponsePayload<TPayload = unknown> {
+  body: TPayload
+  meta?: SnapshotResponseMeta
+}
+
 export interface RawSignalPrimaryEntry {
   base_id?: string | null
   label?: string | null
@@ -73,6 +96,10 @@ export interface RawLinkedTrade {
   linked_trade_id?: string | null
   link_status?: string | null
   link_confidence?: number | null
+  position_id?: string | number | null
+  link_type?: string | null
+  match_score_total?: number | null
+  match_score_max?: number | null
 }
 
 export interface RawSignalStatuses {
@@ -141,4 +168,69 @@ export interface RawSystemStatusResponse {
   snapshot_status?: "OK" | "STALE" | string
   snapshot_age_seconds?: number | null
   snapshot_stale_after_seconds?: number | null
+}
+
+export interface RawSignalTradeLinkSignal {
+  event_id?: string | null
+  bar_close_time_utc?: string | null
+  bot_name?: string | null
+  strategy_name?: string | null
+  symbol?: string | null
+  timeframe_signal?: string | null
+  direction?: string | null
+  score_total?: number | null
+}
+
+export interface RawSignalTradeLinkSignalPlan {
+  base_id?: string | null
+  label?: string | null
+  entry_price?: number | null
+  sl_price?: number | null
+  tp_price?: number | null
+  risk_reward?: number | null
+}
+
+export interface RawSignalTradeLinkTradeExecution {
+  trade_id?: string | null
+  position_id?: string | number | null
+  platform?: string | null
+  environment?: string | null
+  symbol?: string | null
+  direction?: string | null
+  entry_time_utc?: string | null
+  entry_price?: number | null
+  initial_sl_price?: number | null
+  initial_tp_price?: number | null
+  trade_status?: string | null
+  result_status?: string | null
+}
+
+export interface RawSignalTradeLinkItem {
+  link_id?: string | null
+  signal_event_id?: string | null
+  trade_id?: string | null
+  position_id?: string | number | null
+  link_status?: string | null
+  link_type?: string | null
+  link_confidence?: number | null
+  match_score_total?: number | null
+  match_score_max?: number | null
+  match_time?: boolean | number | null
+  match_symbol?: boolean | number | null
+  match_direction?: boolean | number | null
+  match_entry_price?: boolean | number | null
+  match_sl?: boolean | number | null
+  match_tp?: boolean | number | null
+  time_delta_seconds?: number | null
+  entry_delta_points?: number | null
+  sl_delta_points?: number | null
+  tp_delta_points?: number | null
+  signal?: RawSignalTradeLinkSignal | null
+  signal_plan?: RawSignalTradeLinkSignalPlan | null
+  trade_execution?: RawSignalTradeLinkTradeExecution | null
+  created_at_utc?: string | null
+  updated_at_utc?: string | null
+  created_by?: string | null
+  updated_by?: string | null
+  notes?: string | null
 }

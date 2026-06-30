@@ -2,6 +2,8 @@ import type { UiDataStatus } from "@/types/snapshots"
 
 export function statusFromItems(sourceStatus: string | null | undefined, itemCount: number): UiDataStatus {
   if (sourceStatus === "EMPTY") return "empty"
+  if (sourceStatus === "ERROR") return "error"
+  if (sourceStatus === "STALE") return itemCount > 0 ? "stale" : "empty"
   if (sourceStatus === "OK" && itemCount === 0) return "empty"
   if (sourceStatus === "OK" && itemCount > 0) return "ready"
   return itemCount > 0 ? "ready" : "empty"

@@ -1,6 +1,7 @@
 "use client"
 
 import type { SignalBoardItem } from "@/types/snapshots"
+import { SIGNAL_TRADE_LINK_STATUSES, linkStatusLabel } from "@/lib/data/signal-trade-links"
 
 export interface SignalFilters {
   strategyName: string
@@ -11,6 +12,7 @@ export interface SignalFilters {
   minScore: string
   telegramSent: string
   operationStatus: string
+  linkStatus: string
   dateFrom: string
   dateTo: string
 }
@@ -24,6 +26,7 @@ export const emptySignalFilters: SignalFilters = {
   minScore: "",
   telegramSent: "",
   operationStatus: "",
+  linkStatus: "",
   dateFrom: "",
   dateTo: "",
 }
@@ -104,6 +107,12 @@ export function SignalsFilters({
         </label>
         <SelectFilter label="Telegram enviado" value={filters.telegramSent} options={["Si", "No"]} onChange={(value) => update("telegramSent", value)} />
         <SelectFilter label="Estado" value={filters.operationStatus} options={unique(items, (item) => item.operationStatus ?? item.signalStatus)} onChange={(value) => update("operationStatus", value)} />
+        <SelectFilter
+          label="Vinculo trade"
+          value={filters.linkStatus}
+          options={SIGNAL_TRADE_LINK_STATUSES.map(linkStatusLabel)}
+          onChange={(value) => update("linkStatus", value)}
+        />
         <label className="block">
           <span className="mb-1 block text-[11px] uppercase tracking-wide text-muted-foreground">Fecha desde</span>
           <input type="date" value={filters.dateFrom} onChange={(event) => update("dateFrom", event.target.value)} className="h-9 w-full rounded-md border border-border bg-card px-2 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-primary" />

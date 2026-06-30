@@ -1,4 +1,5 @@
 import type { SignalBoardItem } from "@/types/snapshots"
+import { linkStatusForSignal } from "@/lib/data/signal-trade-links"
 
 function countBy(items: SignalBoardItem[], predicate: (item: SignalBoardItem) => boolean) {
   return items.filter(predicate).length
@@ -9,7 +10,7 @@ export function SignalsSummary({ items }: { items: SignalBoardItem[] }) {
     ["Total senales", items.length],
     ["Pendientes", countBy(items, (item) => item.operationStatus === "pending")],
     ["Tomadas", countBy(items, (item) => item.operationStatus === "taken")],
-    ["Sin vincular", countBy(items, (item) => item.linkedTrade == null && item.linkedTradeId == null)],
+    ["Sin vincular", countBy(items, (item) => linkStatusForSignal(item) === "unlinked")],
     ["Errores", countBy(items, (item) => item.signalStatus === "error")],
   ] as const
 

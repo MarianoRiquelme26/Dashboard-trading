@@ -1,0 +1,8 @@
+{
+  "schema_version": "signal_trade_links.v1",
+  "generated_at_utc": null,
+  "source_status": "EMPTY",
+  "snapshot_stale_after_seconds": 180,
+  "error_message": null,
+  "items": []
+}

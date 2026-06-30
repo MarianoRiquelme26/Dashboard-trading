@@ -5,8 +5,9 @@ import { EmptyState } from "@/components/data-status/empty-state"
 import { DataState } from "@/components/data-status/data-state"
 import { DataStatusBadge } from "@/components/data-status/data-status-badge"
 import { useNavigation } from "@/components/navigation-context"
+import { linkStatusForSignal, linkStatusLabel, mergeSignalsWithLinks } from "@/lib/data/signal-trade-links"
 import { formatSnapshotTime } from "@/lib/data/status"
-import { useSignalsBoard } from "@/lib/data/use-snapshot-query"
+import { useSignalTradeLinks, useSignalsBoard } from "@/lib/data/use-snapshot-query"
 import type { SignalBoardItem } from "@/types/snapshots"
 import { SignalDetailDrawer } from "./signal-detail-drawer"
 import { emptySignalFilters, SignalsFilters, type SignalFilters } from "./signals-filters"
@@ -16,7 +17,7 @@ import { SignalsTabs, type SignalTab } from "./signals-tabs"
 
 function tabMatches(signal: SignalBoardItem, tab: SignalTab) {
   if (tab === "all") return true
-  if (tab === "unlinked") return signal.linkedTrade == null && signal.linkedTradeId == null
+  if (tab === "unlinked") return linkStatusForSignal(signal) === "unlinked"
   return signal.operationStatus === tab
 }
 
@@ -27,6 +28,7 @@ function matchesFilters(signal: SignalBoardItem, filters: SignalFilters) {
   if (filters.timeframeSignal && signal.timeframeSignal !== filters.timeframeSignal) return false
   if (filters.direction && signal.direction !== filters.direction) return false
   if (filters.operationStatus && (signal.operationStatus ?? signal.signalStatus) !== filters.operationStatus) return false
+  if (filters.linkStatus && linkStatusLabel(linkStatusForSignal(signal)) !== filters.linkStatus) return false
   if (filters.telegramSent && (signal.telegramSent ? "Si" : "No") !== filters.telegramSent) return false
   if (filters.minScore && (signal.scoreTotal ?? Number.NEGATIVE_INFINITY) < Number(filters.minScore)) return false
   if (filters.dateFrom && (signal.barCloseTimeUtc ?? "") < `${filters.dateFrom}T00:00:00`) return false
@@ -41,18 +43,19 @@ function tabCounts(items: SignalBoardItem[]) {
     taken: items.filter((item) => item.operationStatus === "taken").length,
     discarded: items.filter((item) => item.operationStatus === "discarded").length,
     expired: items.filter((item) => item.operationStatus === "expired").length,
-    unlinked: items.filter((item) => item.linkedTrade == null && item.linkedTradeId == null).length,
+    unlinked: items.filter((item) => linkStatusForSignal(item) === "unlinked").length,
   }
 }
 
 export function SignalsView() {
   const { signalEventIdFilter, clearSignalFilter } = useNavigation()
   const { data, status, error, isLoading, refetch } = useSignalsBoard()
+  const linksQuery = useSignalTradeLinks()
   const [activeTab, setActiveTab] = useState<SignalTab>("all")
   const [filters, setFilters] = useState<SignalFilters>(emptySignalFilters)
   const [selectedSignalId, setSelectedSignalId] = useState<string | null>(null)
 
-  const items = useMemo(() => data?.items ?? [], [data?.items])
+  const items = useMemo(() => mergeSignalsWithLinks(data?.items ?? [], linksQuery.data?.items ?? []), [data?.items, linksQuery.data?.items])
   const selectedSignal = items.find((item) => item.eventId === (signalEventIdFilter ?? selectedSignalId)) ?? null
 
   const filteredItems = useMemo(() => {
@@ -98,6 +101,11 @@ export function SignalsView() {
               >
                 Quitar filtro
               </button>
+            </div>
+          )}
+          {linksQuery.status === "error" && (
+            <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-100">
+              No se pudo cargar signal-trade-links. Signals queda visible sin inferir vinculos nuevos.
             </div>
           )}
           <SignalsTabs active={activeTab} counts={tabCounts(items)} onChange={setActiveTab} />

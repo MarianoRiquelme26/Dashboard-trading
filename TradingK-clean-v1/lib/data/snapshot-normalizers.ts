@@ -2,6 +2,7 @@ import type {
   RawJournalTradeItem,
   RawJournalTradesResponse,
   RawLinkedTrade,
+  RawSignalTradeLinkItem,
   RawSignalCore,
   RawSignalCondition,
   RawSignalEntry,
@@ -9,6 +10,9 @@ import type {
   RawSignalStatuses,
   RawSignalsBoardItem,
   RawSignalsRecentItem,
+  RawSnapshotEnvelope,
+  SnapshotResponseMeta,
+  SnapshotResponsePayload,
   RawSystemStatusResponse,
 } from "@/types/snapshot-api"
 import type {
@@ -16,12 +20,21 @@ import type {
   JournalTradesSnapshot,
   LinkedTrade,
   RecentSignalItem,
+  SignalPlanSnapshot,
   SignalBoardItem,
   SignalCondition,
   SignalEntry,
+  SignalTradeComparison,
+  SignalTradeLink,
+  SignalTradeLinkSignalSnapshot,
+  SignalTradeLinkStatus,
+  SignalTradeLinksSnapshot,
+  SignalTradeMatchFlags,
   SignalsBoardSnapshot,
   SignalsRecentSnapshot,
   SystemStatusSnapshot,
+  TradeExecutionSnapshot,
+  UiDataStatus,
 } from "@/types/snapshots"
 import { snapshotAgeSeconds, statusFromItems, statusFromSystemSnapshot } from "./snapshot-status"
 
@@ -43,6 +56,63 @@ function asNumber(value: unknown): number | null {
 
 function asBoolean(value: unknown): boolean {
   return value === true || value === 1 || value === "1"
+}
+
+function asNullableBoolean(value: unknown): boolean | null {
+  if (value === null || value === undefined) return null
+  if (value === true || value === 1 || value === "1") return true
+  if (value === false || value === 0 || value === "0") return false
+  return null
+}
+
+function unwrapSnapshotPayload(raw: unknown): { body: unknown; responseMeta: SnapshotResponseMeta } {
+  if (isRecord(raw) && "body" in raw) {
+    const payload = raw as unknown as SnapshotResponsePayload
+    return { body: payload.body, responseMeta: payload.meta ?? {} }
+  }
+  return { body: raw, responseMeta: {} }
+}
+
+function asEnvelope<TItem>(body: unknown): RawSnapshotEnvelope<TItem> | null {
+  if (!isRecord(body) || !Array.isArray(body.items)) return null
+  return body as RawSnapshotEnvelope<TItem>
+}
+
+function envelopeItems<TItem>(body: unknown): TItem[] {
+  const envelope = asEnvelope<TItem>(body)
+  if (envelope) return asArray<TItem>(envelope.items)
+  return asArray<TItem>(body)
+}
+
+function statusFromEnvelope(
+  envelope: RawSnapshotEnvelope | null,
+  responseMeta: SnapshotResponseMeta,
+  itemCount: number,
+): UiDataStatus {
+  const sourceStatus = asString(envelope?.source_status)
+  const snapshotStatus = asString(envelope?.snapshot_status) ?? responseMeta.headerStatus
+  if (sourceStatus === "EMPTY" || (sourceStatus === "OK" && itemCount === 0)) return "empty"
+  if (sourceStatus === "ERROR") return "error"
+  if (snapshotStatus === "STALE" && itemCount > 0) return "stale"
+  return statusFromItems(sourceStatus, itemCount)
+}
+
+function snapshotMetaFromEnvelope(
+  envelope: RawSnapshotEnvelope | null,
+  responseMeta: SnapshotResponseMeta,
+  itemCount: number,
+) {
+  const generatedAtUtc = asString(envelope?.generated_at_utc) ?? responseMeta.headerGeneratedAtUtc ?? null
+  const staleAfterSeconds = asNumber(envelope?.snapshot_stale_after_seconds) ?? responseMeta.headerStaleAfterSeconds ?? null
+  const ageSeconds = asNumber(envelope?.snapshot_age_seconds) ?? responseMeta.headerAgeSeconds ?? snapshotAgeSeconds(generatedAtUtc)
+  const sourceStatus = asString(envelope?.source_status) ?? asString(envelope?.snapshot_status) ?? responseMeta.headerStatus
+  return {
+    status: statusFromEnvelope(envelope, responseMeta, itemCount),
+    generatedAtUtc,
+    staleAfterSeconds,
+    ageSeconds,
+    sourceStatus,
+  }
 }
 
 function normalizeEntry(entry: RawSignalEntry | RawSignalPrimaryEntry | null | undefined): SignalEntry | null {
@@ -95,8 +165,108 @@ function normalizeLinkedTrade(linkedTrade: RawLinkedTrade | null | undefined): L
   }
 }
 
+export function normalizeLinkStatus(value: string | null | undefined): SignalTradeLinkStatus {
+  if (value === "auto_linked" || value === "suggested" || value === "ambiguous" || value === "manual_linked" || value === "rejected") {
+    return value
+  }
+  return "unlinked"
+}
+
+function normalizeSignalPlan(plan: RawSignalTradeLinkItem["signal_plan"]): SignalPlanSnapshot | null {
+  if (!plan) return null
+  return {
+    baseId: asString(plan.base_id),
+    label: asString(plan.label),
+    entryPrice: asNumber(plan.entry_price),
+    slPrice: asNumber(plan.sl_price),
+    tpPrice: asNumber(plan.tp_price),
+    riskReward: asNumber(plan.risk_reward),
+  }
+}
+
+function normalizeTradeExecution(execution: RawSignalTradeLinkItem["trade_execution"], fallback: RawSignalTradeLinkItem): TradeExecutionSnapshot | null {
+  const tradeId = asString(execution?.trade_id) ?? asString(fallback.trade_id)
+  const positionId = execution?.position_id == null ? fallback.position_id : execution.position_id
+  if (!tradeId && positionId == null) return null
+  return {
+    tradeId,
+    positionId: positionId == null ? null : String(positionId),
+    platform: asString(execution?.platform),
+    environment: asString(execution?.environment),
+    symbol: asString(execution?.symbol),
+    direction: asString(execution?.direction),
+    entryTimeUtc: asString(execution?.entry_time_utc),
+    entryPrice: asNumber(execution?.entry_price),
+    initialSlPrice: asNumber(execution?.initial_sl_price),
+    initialTpPrice: asNumber(execution?.initial_tp_price),
+    tradeStatus: asString(execution?.trade_status),
+    resultStatus: asString(execution?.result_status),
+  }
+}
+
+function normalizeLinkSignal(signal: RawSignalTradeLinkItem["signal"], fallback: RawSignalTradeLinkItem): SignalTradeLinkSignalSnapshot | null {
+  const eventId = asString(signal?.event_id) ?? asString(fallback.signal_event_id)
+  if (!eventId) return null
+  return {
+    eventId,
+    barCloseTimeUtc: asString(signal?.bar_close_time_utc),
+    botName: asString(signal?.bot_name),
+    strategyName: asString(signal?.strategy_name),
+    symbol: asString(signal?.symbol),
+    timeframeSignal: asString(signal?.timeframe_signal),
+    direction: asString(signal?.direction),
+    scoreTotal: asNumber(signal?.score_total),
+  }
+}
+
+function normalizeLinkMatches(item: RawSignalTradeLinkItem): SignalTradeMatchFlags {
+  return {
+    time: asNullableBoolean(item.match_time),
+    symbol: asNullableBoolean(item.match_symbol),
+    direction: asNullableBoolean(item.match_direction),
+    entryPrice: asNullableBoolean(item.match_entry_price),
+    sl: asNullableBoolean(item.match_sl),
+    tp: asNullableBoolean(item.match_tp),
+  }
+}
+
+function normalizeLinkComparison(item: RawSignalTradeLinkItem): SignalTradeComparison {
+  return {
+    timeDeltaSeconds: asNumber(item.time_delta_seconds),
+    entryDeltaPoints: asNumber(item.entry_delta_points),
+    slDeltaPoints: asNumber(item.sl_delta_points),
+    tpDeltaPoints: asNumber(item.tp_delta_points),
+  }
+}
+
+function normalizeSignalTradeLinkItem(item: RawSignalTradeLinkItem): SignalTradeLink {
+  return {
+    linkId: asString(item.link_id),
+    signalEventId: asString(item.signal_event_id) ?? asString(item.signal?.event_id),
+    tradeId: asString(item.trade_id) ?? asString(item.trade_execution?.trade_id),
+    positionId: item.position_id == null ? (item.trade_execution?.position_id == null ? null : String(item.trade_execution.position_id)) : String(item.position_id),
+    linkStatus: normalizeLinkStatus(asString(item.link_status)),
+    linkType: asString(item.link_type),
+    linkConfidence: asNumber(item.link_confidence),
+    matchScoreTotal: asNumber(item.match_score_total),
+    matchScoreMax: asNumber(item.match_score_max),
+    matches: normalizeLinkMatches(item),
+    comparison: normalizeLinkComparison(item),
+    signal: normalizeLinkSignal(item.signal, item),
+    signalPlan: normalizeSignalPlan(item.signal_plan),
+    tradeExecution: normalizeTradeExecution(item.trade_execution, item),
+    createdAtUtc: asString(item.created_at_utc),
+    updatedAtUtc: asString(item.updated_at_utc),
+    createdBy: asString(item.created_by),
+    updatedBy: asString(item.updated_by),
+    notes: asString(item.notes),
+  }
+}
+
 export function normalizeSignalsRecent(raw: unknown): SignalsRecentSnapshot {
-  const items = asArray<RawSignalsRecentItem>(raw)
+  const { body, responseMeta } = unwrapSnapshotPayload(raw)
+  const envelope = asEnvelope<RawSignalsRecentItem>(body)
+  const items = envelopeItems<RawSignalsRecentItem>(body)
     .filter((item) => isRecord(item) && typeof item.event_id === "string")
     .map<RecentSignalItem>((item) => ({
       eventId: item.event_id,
@@ -114,19 +284,18 @@ export function normalizeSignalsRecent(raw: unknown): SignalsRecentSnapshot {
       linkedTradeId: asString(item.linked_trade_id),
       primaryEntry: normalizeEntry(item.primary_entry),
     }))
+  const meta = snapshotMetaFromEnvelope(envelope, responseMeta, items.length)
 
   return {
-    status: items.length > 0 ? "ready" : "empty",
+    ...meta,
     items,
-    generatedAtUtc: null,
-    staleAfterSeconds: 60,
-    ageSeconds: null,
-    sourceStatus: items.length > 0 ? "OK" : "EMPTY",
   }
 }
 
 export function normalizeSignalsBoard(raw: unknown): SignalsBoardSnapshot {
-  const items = asArray<RawSignalsBoardItem>(raw)
+  const { body, responseMeta } = unwrapSnapshotPayload(raw)
+  const envelope = asEnvelope<RawSignalsBoardItem>(body)
+  const items = envelopeItems<RawSignalsBoardItem>(body)
     .filter((item) => isRecord(item))
     .map<SignalBoardItem>((item, index) => {
       const signal: RawSignalCore = item.signal ?? {}
@@ -154,24 +323,25 @@ export function normalizeSignalsBoard(raw: unknown): SignalsBoardSnapshot {
         conditions: asArray<RawSignalCondition>(item.conditions).map(normalizeCondition),
         linkedTrade,
         linkedTradeId: asString(signal.linked_trade_id) ?? linkedTrade?.tradeId ?? null,
+        tradeLink: null,
         warnings: [],
         raw: item,
       }
     })
+  const meta = snapshotMetaFromEnvelope(envelope, responseMeta, items.length)
 
   return {
-    status: items.length > 0 ? "ready" : "empty",
+    ...meta,
     items,
-    generatedAtUtc: null,
-    staleAfterSeconds: 60,
-    ageSeconds: null,
-    sourceStatus: items.length > 0 ? "OK" : "EMPTY",
   }
 }
 
 export function normalizeJournalTrades(raw: unknown): JournalTradesSnapshot {
-  const response = isRecord(raw) ? (raw as RawJournalTradesResponse) : {}
-  const items = asArray<RawJournalTradeItem>(response.items)
+  const { body, responseMeta } = unwrapSnapshotPayload(raw)
+  const response = isRecord(body) ? (body as RawJournalTradesResponse) : {}
+  const envelope = asEnvelope<RawJournalTradeItem>(body)
+  const rawItems = envelope ? envelopeItems<RawJournalTradeItem>(body) : asArray<RawJournalTradeItem>(response.items)
+  const items = rawItems
     .filter((item) => isRecord(item) && typeof item.trade_id === "string")
     .map<JournalTradeItem>((item) => ({
       tradeId: item.trade_id,
@@ -203,24 +373,26 @@ export function normalizeJournalTrades(raw: unknown): JournalTradesSnapshot {
       mistakeType: asString(item.mistake_type),
       ruleComplianceScore: asNumber(item.rule_compliance_score),
       journalNotes: asString(item.journal_notes),
+      tradeLink: null,
     }))
+  const meta = snapshotMetaFromEnvelope(envelope, responseMeta, items.length)
 
   return {
-    status: statusFromItems(response.source_status, items.length),
+    ...meta,
     items,
     schemaVersion: asString(response.schema_version),
-    generatedAtUtc: asString(response.generated_at_utc),
-    staleAfterSeconds: null,
-    ageSeconds: snapshotAgeSeconds(response.generated_at_utc),
-    sourceStatus: asString(response.source_status),
   }
 }
 
 export function normalizeSystemStatus(raw: unknown): SystemStatusSnapshot {
-  const response = isRecord(raw) ? (raw as RawSystemStatusResponse) : {}
-  const legacySourceStatus = isRecord(raw) ? asString(raw.source_status) : null
-  const status = legacySourceStatus === "EMPTY" ? "empty" : statusFromSystemSnapshot(response.snapshot_status)
+  const { body, responseMeta } = unwrapSnapshotPayload(raw)
+  const envelope = asEnvelope<RawSystemStatusResponse>(body)
+  const response = envelopeItems<RawSystemStatusResponse>(body)[0] ?? (isRecord(body) ? (body as RawSystemStatusResponse) : {})
+  const meta = snapshotMetaFromEnvelope(envelope, responseMeta, envelope ? envelopeItems<RawSystemStatusResponse>(body).length : 1)
+  const legacySourceStatus = isRecord(body) ? asString(body.source_status) : null
+  const status = meta.status === "empty" || legacySourceStatus === "EMPTY" ? "empty" : meta.status === "stale" ? "stale" : statusFromSystemSnapshot(response.snapshot_status)
   return {
+    ...meta,
     status,
     generatedAtUtc: asString(response.generated_at_utc),
     dbStatus: asString(response.db_status),
@@ -231,7 +403,21 @@ export function normalizeSystemStatus(raw: unknown): SystemStatusSnapshot {
     snapshotStatus: asString(response.snapshot_status),
     snapshotAgeSeconds: asNumber(response.snapshot_age_seconds),
     snapshotStaleAfterSeconds: asNumber(response.snapshot_stale_after_seconds),
-    ageSeconds: asNumber(response.snapshot_age_seconds),
-    sourceStatus: asString(response.snapshot_status),
+    ageSeconds: meta.ageSeconds ?? asNumber(response.snapshot_age_seconds),
+    sourceStatus: meta.sourceStatus ?? asString(response.snapshot_status),
+  }
+}
+
+export function normalizeSignalTradeLinks(raw: unknown): SignalTradeLinksSnapshot {
+  const { body, responseMeta } = unwrapSnapshotPayload(raw)
+  const envelope = asEnvelope<RawSignalTradeLinkItem>(body)
+  const items = envelopeItems<RawSignalTradeLinkItem>(body)
+    .filter((item) => isRecord(item))
+    .map(normalizeSignalTradeLinkItem)
+  const meta = snapshotMetaFromEnvelope(envelope, responseMeta, items.length)
+  return {
+    ...meta,
+    schemaVersion: asString(envelope?.schema_version),
+    items,
   }
 }

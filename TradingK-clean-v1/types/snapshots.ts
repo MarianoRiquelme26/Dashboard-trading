@@ -60,6 +60,92 @@ export interface LinkedTrade {
   linkConfidence: number | null
 }
 
+export type SignalTradeLinkStatus =
+  | "auto_linked"
+  | "suggested"
+  | "ambiguous"
+  | "manual_linked"
+  | "rejected"
+  | "unlinked"
+
+export interface SignalPlanSnapshot {
+  baseId: string | null
+  label: string | null
+  entryPrice: number | null
+  slPrice: number | null
+  tpPrice: number | null
+  riskReward: number | null
+}
+
+export interface TradeExecutionSnapshot {
+  tradeId: string | null
+  positionId: string | null
+  platform: string | null
+  environment: string | null
+  symbol: string | null
+  direction: string | null
+  entryTimeUtc: string | null
+  entryPrice: number | null
+  initialSlPrice: number | null
+  initialTpPrice: number | null
+  tradeStatus: string | null
+  resultStatus: string | null
+}
+
+export interface SignalTradeLinkSignalSnapshot {
+  eventId: string | null
+  barCloseTimeUtc: string | null
+  botName: string | null
+  strategyName: string | null
+  symbol: string | null
+  timeframeSignal: string | null
+  direction: string | null
+  scoreTotal: number | null
+}
+
+export interface SignalTradeComparison {
+  timeDeltaSeconds: number | null
+  entryDeltaPoints: number | null
+  slDeltaPoints: number | null
+  tpDeltaPoints: number | null
+}
+
+export interface SignalTradeMatchFlags {
+  time: boolean | null
+  symbol: boolean | null
+  direction: boolean | null
+  entryPrice: boolean | null
+  sl: boolean | null
+  tp: boolean | null
+}
+
+export interface SignalTradeLink {
+  linkId: string | null
+  signalEventId: string | null
+  tradeId: string | null
+  positionId: string | null
+  linkStatus: SignalTradeLinkStatus
+  linkType: string | null
+  linkConfidence: number | null
+  matchScoreTotal: number | null
+  matchScoreMax: number | null
+  matches: SignalTradeMatchFlags
+  comparison: SignalTradeComparison
+  signal: SignalTradeLinkSignalSnapshot | null
+  signalPlan: SignalPlanSnapshot | null
+  tradeExecution: TradeExecutionSnapshot | null
+  createdAtUtc: string | null
+  updatedAtUtc: string | null
+  createdBy: string | null
+  updatedBy: string | null
+  notes: string | null
+}
+
+export interface SignalTradeLinksSnapshot extends SnapshotMeta {
+  schemaVersion: string | null
+  items: SignalTradeLink[]
+}
+
 export interface RecentSignalItem {
   eventId: string
   barCloseTimeUtc: string | null
@@ -102,6 +188,7 @@ export interface SignalBoardItem {
   conditions: SignalCondition[]
   linkedTrade: LinkedTrade | null
   linkedTradeId: string | null
+  tradeLink?: SignalTradeLink | null
   warnings: string[]
   raw: unknown
 }
@@ -140,6 +227,7 @@ export interface JournalTradeItem {
   mistakeType: string | null
   ruleComplianceScore: number | null
   journalNotes: string | null
+  tradeLink?: SignalTradeLink | null
 }
 
 export interface JournalTradesSnapshot extends SnapshotMeta {

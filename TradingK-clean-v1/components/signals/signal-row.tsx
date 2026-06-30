@@ -3,11 +3,12 @@
 import type { SignalBoardItem } from "@/types/snapshots"
 import { StatusPill, toneForDirection, toneForStatus } from "@/components/data-status/status-pill"
 import { formatNumber, formatPrice, getPrimaryEntry } from "@/lib/data/format"
+import { linkStatusForSignal, linkStatusLabel, linkStatusTone, linkTradeId } from "@/lib/data/signal-trade-links"
 import { formatArgTime } from "@/lib/data/status"
 import { cn } from "@/lib/utils"
 
 const signalGrid =
-  "grid-cols-[130px_110px_150px_90px_60px_90px_95px_90px_90px_90px_100px_110px_120px_110px]"
+  "grid-cols-[130px_110px_150px_90px_60px_90px_95px_90px_90px_90px_100px_110px_170px_110px]"
 
 function scoreLabel(signal: SignalBoardItem) {
   if (typeof signal.scoreTotal !== "number") return "-"
@@ -15,7 +16,7 @@ function scoreLabel(signal: SignalBoardItem) {
 }
 
 function linkedTradeLabel(signal: SignalBoardItem) {
-  return signal.linkedTrade?.tradeId ?? signal.linkedTradeId ?? "Sin vincular"
+  return linkTradeId(signal) ?? "N/D"
 }
 
 export function SignalRow({
@@ -29,13 +30,14 @@ export function SignalRow({
 }) {
   const entry = getPrimaryEntry(signal.entries)
   const operationStatus = signal.operationStatus ?? signal.signalStatus ?? "sin estado"
+  const linkStatus = linkStatusForSignal(signal)
 
   return (
     <button
       type="button"
       onClick={onSelect}
       className={cn(
-        "grid w-full min-w-[1420px] gap-3 border-t border-border px-4 py-3 text-left text-sm transition-colors hover:bg-secondary/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary",
+        "grid w-full min-w-[1470px] gap-3 border-t border-border px-4 py-3 text-left text-sm transition-colors hover:bg-secondary/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary",
         signalGrid,
         selected && "bg-primary/10",
       )}
@@ -58,7 +60,10 @@ export function SignalRow({
       <div>
         <StatusPill label={operationStatus} tone={toneForStatus(operationStatus)} />
       </div>
-      <div className="truncate font-mono text-xs">{linkedTradeLabel(signal)}</div>
+      <div className="min-w-0 space-y-1">
+        <StatusPill label={linkStatusLabel(linkStatus)} tone={linkStatusTone(linkStatus)} />
+        <div className="truncate font-mono text-xs text-muted-foreground">{linkedTradeLabel(signal)}</div>
+      </div>
       <div className="font-medium text-primary">Ver detalle</div>
       {signal.entries.length > 1 && <div className="col-span-full text-xs text-muted-foreground">{signal.entries.length} bases</div>}
     </button>
@@ -76,6 +81,7 @@ export function SignalMobileCard({
 }) {
   const entry = getPrimaryEntry(signal.entries)
   const operationStatus = signal.operationStatus ?? signal.signalStatus ?? "sin estado"
+  const linkStatus = linkStatusForSignal(signal)
 
   return (
     <button
@@ -113,6 +119,7 @@ export function SignalMobileCard({
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <StatusPill label={`Score ${scoreLabel(signal)}`} tone="info" />
         <StatusPill label={operationStatus} tone={toneForStatus(operationStatus)} />
+        <StatusPill label={linkStatusLabel(linkStatus)} tone={linkStatusTone(linkStatus)} />
         {signal.entries.length > 1 && <StatusPill label={`${signal.entries.length} bases`} tone="neutral" />}
       </div>
     </button>
