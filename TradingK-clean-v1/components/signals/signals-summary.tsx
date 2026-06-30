@@ -6,11 +6,11 @@ function countBy(items: SignalBoardItem[], predicate: (item: SignalBoardItem) =>
 
 export function SignalsSummary({ items }: { items: SignalBoardItem[] }) {
   const cards = [
-    ["Total señales", items.length],
-    ["Pendientes", countBy(items, (item) => item.operation_status === "pending")],
-    ["Tomadas", countBy(items, (item) => item.operation_status === "taken")],
-    ["Sin vincular", countBy(items, (item) => item.linked_trade == null)],
-    ["Errores", countBy(items, (item) => item.signal_status === "error")],
+    ["Total senales", items.length],
+    ["Pendientes", countBy(items, (item) => item.operationStatus === "pending")],
+    ["Tomadas", countBy(items, (item) => item.operationStatus === "taken")],
+    ["Sin vincular", countBy(items, (item) => item.linkedTrade == null && item.linkedTradeId == null)],
+    ["Errores", countBy(items, (item) => item.signalStatus === "error")],
   ] as const
 
   return (

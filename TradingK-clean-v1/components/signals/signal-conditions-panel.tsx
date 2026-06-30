@@ -5,7 +5,7 @@ import { formatNumber } from "@/lib/data/format"
 const categoryLabels: Record<string, string> = {
   context: "Contexto",
   trigger: "Disparo",
-  execution: "Ejecución",
+  execution: "Ejecucion",
   risk: "Riesgo",
   warning: "Warnings",
 }
@@ -24,7 +24,7 @@ export function SignalConditionsPanel({ signal }: { signal: SignalBoardItem }) {
 
   return (
     <section className="rounded-lg border border-border p-4">
-      <h4 className="font-heading text-sm font-semibold text-foreground">Condiciones técnicas</h4>
+      <h4 className="font-heading text-sm font-semibold text-foreground">Condiciones tecnicas</h4>
       <div className="mt-3 space-y-3">
         {categories.map((category) => {
           const values = groups[category] ?? []
@@ -36,7 +36,7 @@ export function SignalConditionsPanel({ signal }: { signal: SignalBoardItem }) {
               ) : (
                 <div className="mt-2 space-y-2">
                   {values.map((condition) => (
-                    <div key={condition.condition_code} className="rounded-md border border-border bg-card/50 p-3">
+                    <div key={condition.conditionCode} className="rounded-md border border-border bg-card/50 p-3">
                       <div className="flex flex-wrap items-center gap-2">
                         <p className="font-medium text-foreground">{condition.label}</p>
                         {condition.timeframe && <StatusPill label={condition.timeframe} tone="neutral" />}
@@ -44,14 +44,14 @@ export function SignalConditionsPanel({ signal }: { signal: SignalBoardItem }) {
                         <StatusPill label={condition.severity} tone={toneForStatus(condition.severity)} />
                       </div>
                       <div className="mt-2 grid grid-cols-1 gap-2 text-xs text-muted-foreground md:grid-cols-2">
-                        <p>Score: {formatNumber(condition.score_points, 2)}</p>
-                        <p>Actual: {condition.actual_value ?? "-"}</p>
+                        <p>Score: {formatNumber(condition.scorePoints, 2)}</p>
+                        <p>Actual: {condition.actualValue ?? "-"}</p>
                         <p>
-                          Valor: {formatNumber(condition.numeric_value, 4)} {condition.unit ?? ""}
+                          Valor: {formatNumber(condition.numericValue, 4)} {condition.unit ?? ""}
                         </p>
-                        <p>Esperado: {condition.expected_value ?? "-"}</p>
+                        <p>Esperado: {condition.expectedValue ?? "-"}</p>
                       </div>
-                      {condition.details && <p className="mt-2 text-xs text-foreground/80">{condition.details}</p>}
+                      {condition.details && <p className="mt-2 whitespace-pre-wrap text-xs text-foreground/80">{condition.details}</p>}
                     </div>
                   ))}
                 </div>

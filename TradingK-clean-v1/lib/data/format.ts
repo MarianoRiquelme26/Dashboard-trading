@@ -27,11 +27,11 @@ export function formatOperationalTime(local: string | null | undefined, utc: str
 }
 
 export function getPrimaryEntry(entries: SignalEntry[]) {
-  return entries.find((entry) => entry.base_id === "base_1") ?? entries[0] ?? null
+  return entries.find((entry) => entry.baseId === "base_1") ?? entries[0] ?? null
 }
 
 export function getSignalTime(signal: SignalBoardItem) {
-  return formatOperationalTime(signal.bar_close_time_local, signal.bar_close_time_utc)
+  return formatArgTime(signal.barCloseTimeUtc)
 }
 
 export function getStatusLabel(status: DataSourceStatus | string | null | undefined) {

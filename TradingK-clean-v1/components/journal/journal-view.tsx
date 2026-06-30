@@ -2,17 +2,13 @@
 
 import { DataState } from "@/components/data-status/data-state"
 import { DataStatusBadge } from "@/components/data-status/data-status-badge"
-import { useSnapshot } from "@/lib/data/load-json"
 import { formatSnapshotTime } from "@/lib/data/status"
-import { isJournalTradesSnapshot } from "@/lib/data/validators"
-import type { JournalTradesSnapshot } from "@/types/snapshots"
+import { useJournalTrades } from "@/lib/data/use-snapshot-query"
 import { PerformanceHero } from "./performance-hero"
 import { TradeTable } from "./trade-table"
 
 export function JournalView() {
-  const { data, status, error, isLoading } = useSnapshot<JournalTradesSnapshot>("/data/journal_trades.json", {
-    validate: isJournalTradesSnapshot,
-  })
+  const { data, status, error, isLoading, refetch } = useJournalTrades()
   const items = data?.items ?? []
 
   return (
@@ -21,10 +17,10 @@ export function JournalView() {
         <div>
           <div className="flex items-center gap-3">
             <h2 className="font-heading text-2xl font-semibold text-foreground">Journal</h2>
-            <DataStatusBadge status={status} generatedAtUtc={data?.generated_at_utc} />
+            <DataStatusBadge status={status} generatedAtUtc={data?.generatedAtUtc} />
           </div>
-          <p className="text-muted-foreground">Solo operaciones tomadas. No es inventario de oportunidades.</p>
-          <p className="mt-1 text-xs text-muted-foreground">Último snapshot: {formatSnapshotTime(data?.generated_at_utc)}</p>
+          <p className="text-muted-foreground">Operaciones ejecutadas, abiertas y cerradas. No es inventario de oportunidades.</p>
+          <p className="mt-1 text-xs text-muted-foreground">Ultimo snapshot: {formatSnapshotTime(data?.generatedAtUtc)}</p>
         </div>
       </div>
 
@@ -36,9 +32,10 @@ export function JournalView() {
         <DataState
           status={status}
           error={error}
-          generatedAtUtc={data?.generated_at_utc}
+          generatedAtUtc={data?.generatedAtUtc}
+          onRetry={refetch}
           emptyTitle="Journal EMPTY"
-          emptyDescription="No hay operaciones reales registradas. Cuando trade_ingest_v1 esté activo, acá aparecerán operaciones tomadas."
+          emptyDescription="Journal EMPTY: todavia no hay operaciones reales exportadas."
         >
           <TradeTable items={items} />
         </DataState>

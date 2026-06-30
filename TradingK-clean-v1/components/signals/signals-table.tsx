@@ -4,12 +4,12 @@ import type { SignalBoardItem } from "@/types/snapshots"
 import { SignalMobileCard, SignalRow, signalGrid } from "./signal-row"
 
 const headers = [
-  "Hora",
+  "Hora senal",
   "Bot",
   "Estrategia",
-  "Símbolo",
+  "Simbolo",
   "TF",
-  "Dirección",
+  "Direccion",
   "Score",
   "Entrada",
   "SL",
@@ -17,7 +17,7 @@ const headers = [
   "Telegram",
   "Estado",
   "Trade",
-  "Acción",
+  "Accion",
 ]
 
 export function SignalsTable({
@@ -38,12 +38,12 @@ export function SignalsTable({
           ))}
         </div>
         {items.map((signal) => (
-          <SignalRow key={signal.event_id} signal={signal} selected={selectedId === signal.event_id} onSelect={() => onSelect(signal)} />
+          <SignalRow key={signal.eventId} signal={signal} selected={selectedId === signal.eventId} onSelect={() => onSelect(signal)} />
         ))}
       </div>
       <div className="space-y-3 md:hidden">
         {items.map((signal) => (
-          <SignalMobileCard key={signal.event_id} signal={signal} selected={selectedId === signal.event_id} onSelect={() => onSelect(signal)} />
+          <SignalMobileCard key={signal.eventId} signal={signal} selected={selectedId === signal.eventId} onSelect={() => onSelect(signal)} />
         ))}
       </div>
     </>

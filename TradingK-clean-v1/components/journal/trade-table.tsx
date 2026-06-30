@@ -4,68 +4,84 @@ import { formatNumber, formatPrice } from "@/lib/data/format"
 import { formatArgTime } from "@/lib/data/status"
 
 const tradeGrid =
-  "grid-cols-[130px_90px_90px_130px_100px_90px_90px_120px_100px_120px_130px_140px_180px]"
+  "grid-cols-[130px_90px_90px_130px_100px_90px_90px_120px_130px_100px_100px_100px_130px_140px_180px]"
 
 const headers = [
   "Hora entrada",
-  "Símbolo",
-  "Dirección",
+  "Simbolo",
+  "Direccion",
   "Estrategia",
   "Entrada",
   "SL inicial",
   "TP inicial",
+  "Estado trade",
+  "Senal vinculada",
   "Salida",
   "Resultado R",
-  "Net profit",
-  "Señal vinculada",
-  "Error/review",
-  "Nota",
+  "Resultado neto",
+  "Resultado pips",
+  "Error / Review",
+  "Notas",
 ]
+
+function display(value: string | number | null | undefined) {
+  if (value === null || value === undefined || value === "") return "N/D"
+  return String(value)
+}
 
 export function TradeTable({ items }: { items: JournalTradeItem[] }) {
   return (
     <>
       <div className="hidden overflow-x-auto rounded-lg border border-border md:block">
-        <div className={`grid min-w-[1480px] gap-3 bg-secondary/50 px-4 py-3 text-[11px] uppercase tracking-wide text-muted-foreground ${tradeGrid}`}>
+        <div className={`grid min-w-[1680px] gap-3 bg-secondary/50 px-4 py-3 text-[11px] uppercase tracking-wide text-muted-foreground ${tradeGrid}`}>
           {headers.map((header) => (
             <div key={header}>{header}</div>
           ))}
         </div>
         {items.map((trade) => (
-          <div key={trade.trade_id} className={`grid min-w-[1480px] gap-3 border-t border-border px-4 py-3 text-sm ${tradeGrid}`}>
-            <div className="font-mono text-xs text-muted-foreground">{formatArgTime(trade.entry_time_utc)}</div>
-            <div>{trade.symbol}</div>
+          <div key={trade.tradeId} className={`grid min-w-[1680px] gap-3 border-t border-border px-4 py-3 text-sm ${tradeGrid}`}>
+            <div className="font-mono text-xs text-muted-foreground">{formatArgTime(trade.entryTimeUtc)}</div>
+            <div>{trade.symbol ?? "N/D"}</div>
             <div>
-              <StatusPill label={trade.direction.toUpperCase()} tone={toneForDirection(trade.direction)} />
+              <StatusPill label={(trade.direction ?? "-").toUpperCase()} tone={toneForDirection(trade.direction ?? "")} />
             </div>
-            <div>{trade.strategy_name ?? "-"}</div>
-            <div className="font-mono">{formatPrice(trade.entry_price)}</div>
-            <div className="font-mono">{formatPrice(trade.initial_sl_price)}</div>
-            <div className="font-mono">{formatPrice(trade.initial_tp_price)}</div>
-            <div className="font-mono text-xs">{formatArgTime(trade.result?.closed_at_utc)}</div>
-            <div>{formatNumber(trade.result?.result_r, 2)}</div>
-            <div>{formatNumber(trade.result?.net_profit, 2)}</div>
-            <div className="font-mono text-xs">{trade.linked_signal?.event_id ?? "-"}</div>
-            <div>{trade.review?.mistake_type ?? "-"}</div>
-            <div>{trade.review?.journal_notes ?? "-"}</div>
+            <div>{trade.strategyName ?? "N/D"}</div>
+            <div className="font-mono">{formatPrice(trade.entryPrice)}</div>
+            <div className="font-mono">{formatPrice(trade.initialSlPrice)}</div>
+            <div className="font-mono">{formatPrice(trade.initialTpPrice)}</div>
+            <div>
+              <StatusPill label={trade.tradeStatus ?? "N/D"} tone={toneForStatus(trade.tradeStatus)} />
+            </div>
+            <div className="font-mono text-xs">{trade.linkedSignalEventId ?? "N/D"}</div>
+            <div className="font-mono text-xs">{trade.closedAtUtc ? formatArgTime(trade.closedAtUtc) : "N/D"}</div>
+            <div>{trade.resultR === null ? "N/D" : formatNumber(trade.resultR, 2)}</div>
+            <div>{trade.netProfit === null ? "N/D" : formatNumber(trade.netProfit, 2)}</div>
+            <div>{trade.resultPips === null ? "N/D" : formatNumber(trade.resultPips, 1)}</div>
+            <div>{display(trade.mistakeType ?? trade.reviewStatus)}</div>
+            <div>{display(trade.journalNotes)}</div>
           </div>
         ))}
       </div>
       <div className="space-y-3 md:hidden">
         {items.map((trade) => (
-          <article key={trade.trade_id} className="rounded-lg border border-border bg-card p-4">
+          <article key={trade.tradeId} className="rounded-lg border border-border bg-card p-4">
             <div className="mb-3 flex items-start justify-between gap-3">
               <div>
-                <p className="font-mono text-xs text-muted-foreground">{formatArgTime(trade.entry_time_utc)}</p>
-                <h3 className="font-heading text-base font-semibold text-foreground">{trade.symbol}</h3>
-                <p className="text-sm text-muted-foreground">{trade.strategy_name ?? "Sin estrategia"}</p>
+                <p className="font-mono text-xs text-muted-foreground">{formatArgTime(trade.entryTimeUtc)}</p>
+                <h3 className="font-heading text-base font-semibold text-foreground">{trade.symbol ?? "N/D"}</h3>
+                <p className="text-sm text-muted-foreground">{trade.strategyName ?? "Sin estrategia"}</p>
               </div>
-              <StatusPill label={trade.trade_status} tone={toneForStatus(trade.trade_status)} />
+              <StatusPill label={trade.tradeStatus ?? "N/D"} tone={toneForStatus(trade.tradeStatus)} />
             </div>
             <div className="grid grid-cols-3 gap-2 text-sm">
-              <p>Entrada: {formatPrice(trade.entry_price)}</p>
-              <p>SL: {formatPrice(trade.initial_sl_price)}</p>
-              <p>TP: {formatPrice(trade.initial_tp_price)}</p>
+              <p>Entrada: {formatPrice(trade.entryPrice)}</p>
+              <p>SL: {formatPrice(trade.initialSlPrice)}</p>
+              <p>TP: {formatPrice(trade.initialTpPrice)}</p>
+            </div>
+            <div className="mt-3 grid gap-1 text-sm text-muted-foreground">
+              <p>Salida: {trade.closedAtUtc ? formatArgTime(trade.closedAtUtc) : "N/D"}</p>
+              <p>Resultado R: {trade.resultR === null ? "N/D" : formatNumber(trade.resultR, 2)}</p>
+              <p>Neto: {trade.netProfit === null ? "N/D" : formatNumber(trade.netProfit, 2)}</p>
             </div>
           </article>
         ))}

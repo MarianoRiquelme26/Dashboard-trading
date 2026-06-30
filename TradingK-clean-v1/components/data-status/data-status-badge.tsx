@@ -1,18 +1,25 @@
-import type { DataSourceStatus } from "@/types/snapshots"
+import type { DataSourceStatus, UiDataStatus } from "@/types/snapshots"
 import { cn } from "@/lib/utils"
 import { formatSnapshotTime } from "@/lib/data/status"
 
-const statusClasses: Record<DataSourceStatus, string> = {
+type BadgeStatus = DataSourceStatus | UiDataStatus
+
+const statusClasses: Record<BadgeStatus, string> = {
   REAL: "border-emerald-500/30 bg-emerald-500/10 text-emerald-400",
   PARTIAL: "border-sky-500/30 bg-sky-500/10 text-sky-300",
   MOCK: "border-fuchsia-500/40 bg-fuchsia-500/15 text-fuchsia-200",
   EMPTY: "border-slate-500/30 bg-slate-500/10 text-slate-300",
   ERROR: "border-red-500/40 bg-red-500/15 text-red-200",
   STALE: "border-amber-500/40 bg-amber-500/15 text-amber-200",
+  loading: "border-slate-500/30 bg-slate-500/10 text-slate-300",
+  ready: "border-emerald-500/30 bg-emerald-500/10 text-emerald-400",
+  empty: "border-slate-500/30 bg-slate-500/10 text-slate-300",
+  error: "border-red-500/40 bg-red-500/15 text-red-200",
+  stale: "border-amber-500/40 bg-amber-500/15 text-amber-200",
 }
 
 interface DataStatusBadgeProps {
-  status: DataSourceStatus
+  status: BadgeStatus
   label?: string
   generatedAtUtc?: string | null
   className?: string
@@ -29,7 +36,7 @@ export function DataStatusBadge({ status, label, generatedAtUtc, className }: Da
       )}
     >
       {label ? `${label}: ` : null}
-      {status}
+      {status.toUpperCase()}
     </span>
   )
 }
