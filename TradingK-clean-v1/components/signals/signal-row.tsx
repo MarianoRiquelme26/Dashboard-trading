@@ -11,7 +11,7 @@ const signalGrid =
   "grid-cols-[130px_110px_150px_90px_60px_90px_95px_90px_90px_90px_100px_110px_170px_110px]"
 
 function scoreLabel(signal: SignalBoardItem) {
-  if (typeof signal.scoreTotal !== "number") return "-"
+  if (typeof signal.scoreTotal !== "number") return "N/D"
   return signal.scoreLabel ? `${formatNumber(signal.scoreTotal, 1)} ${signal.scoreLabel}` : formatNumber(signal.scoreTotal, 1)
 }
 
@@ -43,12 +43,12 @@ export function SignalRow({
       )}
     >
       <div className="font-mono text-xs text-muted-foreground">{formatArgTime(signal.barCloseTimeUtc)}</div>
-      <div className="truncate">{signal.botName ?? "-"}</div>
-      <div className="truncate text-primary">{signal.strategyName ?? "-"}</div>
-      <div className="font-mono">{signal.symbol ?? "-"}</div>
-      <div>{signal.timeframeSignal ?? "-"}</div>
+      <div className="truncate">{signal.botName ?? "N/D"}</div>
+      <div className="truncate text-primary">{signal.strategyName ?? "N/D"}</div>
+      <div className="font-mono">{signal.symbol ?? "N/D"}</div>
+      <div>{signal.timeframeSignal ?? "N/D"}</div>
       <div>
-        <StatusPill label={(signal.direction ?? "-").toUpperCase()} tone={toneForDirection(signal.direction ?? "")} />
+        <StatusPill label={(signal.direction ?? "N/D").toUpperCase()} tone={toneForDirection(signal.direction ?? "")} />
       </div>
       <div>{scoreLabel(signal)}</div>
       <div className="font-mono">{formatPrice(entry?.entryPrice)}</div>
@@ -95,12 +95,12 @@ export function SignalMobileCard({
       <div className="mb-3 flex items-start justify-between gap-3">
         <div>
           <p className="font-mono text-xs text-muted-foreground">{formatArgTime(signal.barCloseTimeUtc)}</p>
-          <h3 className="mt-1 font-heading text-base font-semibold text-foreground">{signal.strategyName ?? "-"}</h3>
+          <h3 className="mt-1 font-heading text-base font-semibold text-foreground">{signal.strategyName ?? "N/D"}</h3>
           <p className="text-sm text-muted-foreground">
-            {signal.symbol ?? "-"} / {signal.timeframeSignal ?? "-"}
+            {signal.symbol ?? "N/D"} / {signal.timeframeSignal ?? "N/D"}
           </p>
         </div>
-        <StatusPill label={(signal.direction ?? "-").toUpperCase()} tone={toneForDirection(signal.direction ?? "")} />
+        <StatusPill label={(signal.direction ?? "N/D").toUpperCase()} tone={toneForDirection(signal.direction ?? "")} />
       </div>
       <div className="grid grid-cols-3 gap-2 text-sm">
         <div>

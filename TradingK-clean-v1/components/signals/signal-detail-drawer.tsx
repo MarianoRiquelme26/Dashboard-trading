@@ -45,10 +45,10 @@ export function SignalDetailDrawer({ signal }: { signal: SignalBoardItem | null 
       <div>
         <div className="flex flex-wrap items-center gap-2">
           <h3 className="font-heading text-lg font-semibold text-foreground">
-            {signal.strategyName ?? "-"} / {signal.symbol ?? "-"}
+            {signal.strategyName ?? "N/D"} / {signal.symbol ?? "N/D"}
           </h3>
-          <StatusPill label={(signal.direction ?? "-").toUpperCase()} tone={toneForDirection(signal.direction ?? "")} />
-          <StatusPill label={signal.timeframeSignal ?? "-"} tone="neutral" />
+          <StatusPill label={(signal.direction ?? "N/D").toUpperCase()} tone={toneForDirection(signal.direction ?? "")} />
+          <StatusPill label={signal.timeframeSignal ?? "N/D"} tone="neutral" />
         </div>
         <div className="mt-2 flex flex-wrap gap-2">
           <StatusPill label={`Score ${formatNumber(signal.scoreTotal, 1)}`} tone="info" />

@@ -12,7 +12,7 @@ export function StaleState({ generatedAtUtc }: StaleStateProps) {
       <div>
         <h3 className="font-heading text-sm font-semibold text-amber-100">STALE</h3>
         <p className="mt-1 text-sm text-amber-100/80">
-          El snapshot está vencido. Se muestran los últimos datos disponibles. Última generación:{" "}
+          El snapshot esta vencido. Se muestran los ultimos datos disponibles. Ultima generacion:{" "}
           {formatArgTime(generatedAtUtc)}.
         </p>
       </div>

@@ -45,11 +45,11 @@ export function SignalConditionsPanel({ signal }: { signal: SignalBoardItem }) {
                       </div>
                       <div className="mt-2 grid grid-cols-1 gap-2 text-xs text-muted-foreground md:grid-cols-2">
                         <p>Score: {formatNumber(condition.scorePoints, 2)}</p>
-                        <p>Actual: {condition.actualValue ?? "-"}</p>
+                        <p>Actual: {condition.actualValue ?? "N/D"}</p>
                         <p>
                           Valor: {formatNumber(condition.numericValue, 4)} {condition.unit ?? ""}
                         </p>
-                        <p>Esperado: {condition.expectedValue ?? "-"}</p>
+                        <p>Esperado: {condition.expectedValue ?? "N/D"}</p>
                       </div>
                       {condition.details && <p className="mt-2 whitespace-pre-wrap text-xs text-foreground/80">{condition.details}</p>}
                     </div>

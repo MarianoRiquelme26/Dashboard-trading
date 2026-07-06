@@ -6,7 +6,7 @@ import { DataStatusBadge } from "@/components/data-status/data-status-badge"
 import { StatusPill, toneForDirection, toneForStatus } from "@/components/data-status/status-pill"
 import { useNavigation } from "@/components/navigation-context"
 import { formatNumber, formatPrice } from "@/lib/data/format"
-import { formatSnapshotTime } from "@/lib/data/status"
+import { formatSnapshotLabel, formatSnapshotTime } from "@/lib/data/status"
 import { useSignalsRecent } from "@/lib/data/use-snapshot-query"
 
 export function RecentSignalsCard() {
@@ -22,7 +22,7 @@ export function RecentSignalsCard() {
             <RadioTower className="h-4 w-4 text-primary" />
             <h3 className="font-heading text-lg font-semibold text-foreground">Recent Signals</h3>
           </div>
-          <p className="text-xs text-muted-foreground">Ultimo snapshot: {formatSnapshotTime(data?.generatedAtUtc)}</p>
+          <p className="text-xs text-muted-foreground">Ultimo snapshot: {formatSnapshotLabel(data?.generatedAtUtc, (data?.items.length ?? 0) > 0)}</p>
         </div>
         <DataStatusBadge status={status} generatedAtUtc={data?.generatedAtUtc} />
       </div>
@@ -55,10 +55,10 @@ export function RecentSignalsCard() {
                 className="grid w-full grid-cols-1 gap-2 border-t border-border px-4 py-3 text-left text-sm transition-colors hover:bg-secondary/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary md:grid-cols-6 md:gap-3"
               >
                 <div className="font-mono text-xs text-muted-foreground">{formatSnapshotTime(item.barCloseTimeUtc)}</div>
-                <div className="truncate text-foreground">{item.strategyName ?? "-"}</div>
-                <div className="font-mono text-foreground/80">{item.symbol ?? "-"}</div>
+                <div className="truncate text-foreground">{item.strategyName ?? "N/D"}</div>
+                <div className="font-mono text-foreground/80">{item.symbol ?? "N/D"}</div>
                 <div>
-                  <StatusPill label={(item.direction ?? "-").toUpperCase()} tone={toneForDirection(item.direction ?? "")} />
+                  <StatusPill label={(item.direction ?? "N/D").toUpperCase()} tone={toneForDirection(item.direction ?? "")} />
                 </div>
                 <div>
                   {formatNumber(item.scoreTotal, 1)} {item.scoreLabel ?? ""}

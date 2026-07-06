@@ -3,8 +3,8 @@
 import { useMemo, useState } from "react"
 import { DataState } from "@/components/data-status/data-state"
 import { DataStatusBadge } from "@/components/data-status/data-status-badge"
-import { linkStatusForTrade, linkStatusLabel, mergeTradesWithLinks, SIGNAL_TRADE_LINK_STATUSES } from "@/lib/data/signal-trade-links"
-import { formatSnapshotTime } from "@/lib/data/status"
+import { JOURNAL_LINK_FILTERS, journalLinkFilterLabel, mergeTradesWithLinks, tradeMatchesJournalLinkFilter, type JournalLinkFilter } from "@/lib/data/signal-trade-links"
+import { formatSnapshotLabel } from "@/lib/data/status"
 import { useJournalTrades, useSignalTradeLinks } from "@/lib/data/use-snapshot-query"
 import { PerformanceHero } from "./performance-hero"
 import { TradeTable } from "./trade-table"
@@ -14,11 +14,11 @@ export function JournalView() {
   const { data, status, error, isLoading, refetch } = useJournalTrades()
   const linksQuery = useSignalTradeLinks()
   const [selectedTradeId, setSelectedTradeId] = useState<string | null>(null)
-  const [linkStatusFilter, setLinkStatusFilter] = useState("")
+  const [linkStatusFilter, setLinkStatusFilter] = useState<JournalLinkFilter | "">("")
   const items = useMemo(() => mergeTradesWithLinks(data?.items ?? [], linksQuery.data?.items ?? []), [data?.items, linksQuery.data?.items])
   const filteredItems = useMemo(() => {
     if (!linkStatusFilter) return items
-    return items.filter((trade) => linkStatusLabel(linkStatusForTrade(trade)) === linkStatusFilter)
+    return items.filter((trade) => tradeMatchesJournalLinkFilter(trade, linkStatusFilter))
   }, [items, linkStatusFilter])
   const selectedTrade = filteredItems.find((trade) => trade.tradeId === selectedTradeId) ?? filteredItems[0] ?? null
 
@@ -31,7 +31,7 @@ export function JournalView() {
             <DataStatusBadge status={status} generatedAtUtc={data?.generatedAtUtc} />
           </div>
           <p className="text-muted-foreground">Operaciones ejecutadas, abiertas y cerradas. No es inventario de oportunidades.</p>
-          <p className="mt-1 text-xs text-muted-foreground">Ultimo snapshot: {formatSnapshotTime(data?.generatedAtUtc)}</p>
+          <p className="mt-1 text-xs text-muted-foreground">Ultimo snapshot: {formatSnapshotLabel(data?.generatedAtUtc, (data?.items.length ?? 0) > 0)}</p>
         </div>
       </div>
 
@@ -58,13 +58,13 @@ export function JournalView() {
               <span className="mb-1 block text-[11px] uppercase tracking-wide text-muted-foreground">Vinculo senal</span>
               <select
                 value={linkStatusFilter}
-                onChange={(event) => setLinkStatusFilter(event.target.value)}
+                onChange={(event) => setLinkStatusFilter(event.target.value as JournalLinkFilter | "")}
                 className="h-9 w-full rounded-md border border-border bg-card px-2 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 <option value="">Todos</option>
-                {SIGNAL_TRADE_LINK_STATUSES.map((linkStatus) => (
-                  <option key={linkStatus} value={linkStatusLabel(linkStatus)}>
-                    {linkStatusLabel(linkStatus)}
+                {JOURNAL_LINK_FILTERS.map((linkFilter) => (
+                  <option key={linkFilter} value={linkFilter}>
+                    {journalLinkFilterLabel(linkFilter)}
                   </option>
                 ))}
               </select>

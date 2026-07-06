@@ -220,11 +220,21 @@ function normalizeLinkSignal(signal: RawSignalTradeLinkItem["signal"], fallback:
 }
 
 function normalizeLinkMatches(item: RawSignalTradeLinkItem): SignalTradeMatchFlags {
+  const matchedByTimeWindow = asNullableBoolean(item.matched_by_time_window) ?? asNullableBoolean(item.match_time)
+  const matchedBySymbol = asNullableBoolean(item.matched_by_symbol) ?? asNullableBoolean(item.match_symbol)
+  const matchedByDirection = asNullableBoolean(item.matched_by_direction) ?? asNullableBoolean(item.match_direction)
+  const matchedByEntryDistance =
+    asNullableBoolean(item.matched_by_entry_distance) ??
+    asNullableBoolean(item.matched_by_price_distance) ??
+    asNullableBoolean(item.match_entry_price)
   return {
-    time: asNullableBoolean(item.match_time),
-    symbol: asNullableBoolean(item.match_symbol),
-    direction: asNullableBoolean(item.match_direction),
-    entryPrice: asNullableBoolean(item.match_entry_price),
+    time: matchedByTimeWindow,
+    symbol: matchedBySymbol,
+    direction: matchedByDirection,
+    entryPrice: matchedByEntryDistance,
+    entryDistance: matchedByEntryDistance,
+    strategy: asNullableBoolean(item.matched_by_strategy),
+    account: asNullableBoolean(item.matched_by_account),
     sl: asNullableBoolean(item.match_sl),
     tp: asNullableBoolean(item.match_tp),
   }
@@ -240,6 +250,7 @@ function normalizeLinkComparison(item: RawSignalTradeLinkItem): SignalTradeCompa
 }
 
 function normalizeSignalTradeLinkItem(item: RawSignalTradeLinkItem): SignalTradeLink {
+  const matches = normalizeLinkMatches(item)
   return {
     linkId: asString(item.link_id),
     signalEventId: asString(item.signal_event_id) ?? asString(item.signal?.event_id),
@@ -250,11 +261,20 @@ function normalizeSignalTradeLinkItem(item: RawSignalTradeLinkItem): SignalTrade
     linkConfidence: asNumber(item.link_confidence),
     matchScoreTotal: asNumber(item.match_score_total),
     matchScoreMax: asNumber(item.match_score_max),
-    matches: normalizeLinkMatches(item),
+    matchedBySymbol: matches.symbol,
+    matchedByDirection: matches.direction,
+    matchedByTimeWindow: matches.time,
+    matchedByEntryDistance: matches.entryDistance,
+    matchedByStrategy: matches.strategy,
+    matchedByAccount: matches.account,
+    matches,
     comparison: normalizeLinkComparison(item),
     signal: normalizeLinkSignal(item.signal, item),
     signalPlan: normalizeSignalPlan(item.signal_plan),
     tradeExecution: normalizeTradeExecution(item.trade_execution, item),
+    isTest: asBoolean(item.is_test),
+    testCaseId: asString(item.test_case_id),
+    testCaseLabel: asString(item.test_case_label),
     createdAtUtc: asString(item.created_at_utc),
     updatedAtUtc: asString(item.updated_at_utc),
     createdBy: asString(item.created_by),
@@ -394,15 +414,15 @@ export function normalizeSystemStatus(raw: unknown): SystemStatusSnapshot {
   return {
     ...meta,
     status,
-    generatedAtUtc: asString(response.generated_at_utc),
+    generatedAtUtc: asString(response.generated_at_utc) ?? meta.generatedAtUtc ?? null,
     dbStatus: asString(response.db_status),
     lastSignalAtUtc: asString(response.last_signal_at_utc),
     lastTelegramSentAtUtc: asString(response.last_telegram_sent_at_utc),
     lastErrorAtUtc: asString(response.last_error_at_utc),
     recentErrorsCount: asNumber(response.recent_errors_count),
     snapshotStatus: asString(response.snapshot_status),
-    snapshotAgeSeconds: asNumber(response.snapshot_age_seconds),
-    snapshotStaleAfterSeconds: asNumber(response.snapshot_stale_after_seconds),
+    snapshotAgeSeconds: asNumber(response.snapshot_age_seconds) ?? meta.ageSeconds ?? null,
+    snapshotStaleAfterSeconds: asNumber(response.snapshot_stale_after_seconds) ?? meta.staleAfterSeconds ?? null,
     ageSeconds: meta.ageSeconds ?? asNumber(response.snapshot_age_seconds),
     sourceStatus: meta.sourceStatus ?? asString(response.snapshot_status),
   }

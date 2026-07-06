@@ -4,7 +4,7 @@ import { ServerCog } from "lucide-react"
 import { DataState } from "@/components/data-status/data-state"
 import { DataStatusBadge } from "@/components/data-status/data-status-badge"
 import { StatusPill, toneForStatus } from "@/components/data-status/status-pill"
-import { formatArgTime, formatSnapshotTime } from "@/lib/data/status"
+import { formatArgTime, formatSnapshotLabel } from "@/lib/data/status"
 import { useSystemStatus } from "@/lib/data/use-snapshot-query"
 
 export function SystemStatusCard() {
@@ -18,7 +18,7 @@ export function SystemStatusCard() {
             <ServerCog className="h-4 w-4 text-primary" />
             <h3 className="font-heading text-lg font-semibold text-foreground">System Status</h3>
           </div>
-          <p className="text-xs text-muted-foreground">Ultimo snapshot: {formatSnapshotTime(data?.generatedAtUtc)}</p>
+          <p className="text-xs text-muted-foreground">Ultimo snapshot: {formatSnapshotLabel(data?.generatedAtUtc, Boolean(data))}</p>
         </div>
         <DataStatusBadge status={status} generatedAtUtc={data?.generatedAtUtc} />
       </div>
@@ -45,8 +45,11 @@ export function SystemStatusCard() {
               <p>Ultimo error: {formatArgTime(data?.lastErrorAtUtc)}</p>
               <p>Errores recientes: {data?.recentErrorsCount ?? 0}</p>
               <p>
-                Edad snapshot: {data?.snapshotAgeSeconds ?? "N/D"}s / stale after{" "}
-                {data?.snapshotStaleAfterSeconds ?? "N/D"}s
+                Edad snapshot:{" "}
+                {data?.snapshotAgeSeconds !== null && data?.snapshotAgeSeconds !== undefined ? `${data.snapshotAgeSeconds}s` : "N/D"}
+                {data?.snapshotStaleAfterSeconds !== null && data?.snapshotStaleAfterSeconds !== undefined
+                  ? ` / stale after ${data.snapshotStaleAfterSeconds}s`
+                  : ""}
               </p>
             </div>
           </div>

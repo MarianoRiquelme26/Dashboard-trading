@@ -3,7 +3,6 @@
 import { DataState } from "@/components/data-status/data-state"
 import { DataStatusBadge } from "@/components/data-status/data-status-badge"
 import { useSnapshot } from "@/lib/data/load-json"
-import { formatSnapshotTime } from "@/lib/data/status"
 import { isPlaybookStrategiesSnapshot } from "@/lib/data/validators"
 import type { PlaybookStrategiesSnapshot } from "@/types/snapshots"
 
@@ -19,8 +18,8 @@ export function PlaybookView() {
           <h2 className="font-heading text-2xl font-semibold text-foreground">Playbook</h2>
           <DataStatusBadge status={status} generatedAtUtc={data?.generated_at_utc} />
         </div>
-        <p className="text-muted-foreground">Reglas base TradingK. Sin setups genéricos inventados.</p>
-        <p className="mt-1 text-xs text-muted-foreground">Último snapshot: {formatSnapshotTime(data?.generated_at_utc)}</p>
+        <p className="text-muted-foreground">Reglas base TradingK. Sin setups genericos inventados.</p>
+        <p className="mt-1 text-xs text-muted-foreground">Fuente parcial documentada.</p>
       </div>
 
       {isLoading ? (

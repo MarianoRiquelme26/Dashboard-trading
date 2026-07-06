@@ -2,7 +2,7 @@
 
 import { DataStatusBadge } from "@/components/data-status/data-status-badge"
 import { isUsingRemoteSnapshotApi } from "@/lib/data/snapshot-api"
-import { formatSnapshotTime } from "@/lib/data/status"
+import { formatSnapshotLabel } from "@/lib/data/status"
 import { useSignalsRecent, useSystemStatus } from "@/lib/data/use-snapshot-query"
 
 export function SnapshotStatusBanner() {
@@ -25,10 +25,10 @@ export function SnapshotStatusBanner() {
           </p>
           {isStale && (
             <p className="mt-2 text-sm text-amber-100">
-              Datos del sistema desactualizados. Se muestran los ultimos datos disponibles. Ultimo snapshot:{" "}
-              {formatSnapshotTime(system.generatedAtUtc ?? recent.generatedAtUtc)}
-              {ageSeconds !== null && ageSeconds !== undefined ? ` · edad ${ageSeconds}s` : ""}
-              {staleAfterSeconds !== null && staleAfterSeconds !== undefined ? ` · vence a los ${staleAfterSeconds}s` : ""}.
+              Datos del sistema desactualizados. Se muestran los ultimos datos disponibles. Ultima actualizacion:{" "}
+              {formatSnapshotLabel(system.generatedAtUtc ?? recent.generatedAtUtc, Boolean(system.data ?? recent.data))}
+              {ageSeconds !== null && ageSeconds !== undefined ? ` - edad ${ageSeconds}s` : ""}
+              {staleAfterSeconds !== null && staleAfterSeconds !== undefined ? ` - vence a los ${staleAfterSeconds}s` : ""}.
             </p>
           )}
         </div>

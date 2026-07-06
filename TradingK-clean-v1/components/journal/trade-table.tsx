@@ -61,7 +61,7 @@ export function TradeTable({
             <div className="font-mono text-xs text-muted-foreground">{formatArgTime(trade.entryTimeUtc)}</div>
             <div>{trade.symbol ?? "N/D"}</div>
             <div>
-              <StatusPill label={(trade.direction ?? "-").toUpperCase()} tone={toneForDirection(trade.direction ?? "")} />
+              <StatusPill label={(trade.direction ?? "N/D").toUpperCase()} tone={toneForDirection(trade.direction ?? "")} />
             </div>
             <div>{trade.strategyName ?? "N/D"}</div>
             <div className="font-mono">{formatPrice(trade.entryPrice)}</div>
@@ -98,7 +98,7 @@ export function TradeTable({
               <div>
                 <p className="font-mono text-xs text-muted-foreground">{formatArgTime(trade.entryTimeUtc)}</p>
                 <h3 className="font-heading text-base font-semibold text-foreground">{trade.symbol ?? "N/D"}</h3>
-                <p className="text-sm text-muted-foreground">{trade.strategyName ?? "Sin estrategia"}</p>
+                <p className="text-sm text-muted-foreground">{trade.strategyName ?? "N/D"}</p>
               </div>
               <StatusPill label={trade.tradeStatus ?? "N/D"} tone={toneForStatus(trade.tradeStatus)} />
             </div>

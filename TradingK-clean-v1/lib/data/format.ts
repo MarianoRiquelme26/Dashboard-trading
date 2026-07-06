@@ -2,7 +2,7 @@ import type { DataSourceStatus, SignalBoardItem, SignalEntry } from "@/types/sna
 import { formatArgTime } from "./status"
 
 export function formatPrice(value: number | null | undefined) {
-  if (typeof value !== "number" || Number.isNaN(value)) return "-"
+  if (typeof value !== "number" || Number.isNaN(value)) return "N/D"
   return new Intl.NumberFormat("es-AR", {
     minimumFractionDigits: value >= 100 ? 2 : 4,
     maximumFractionDigits: value >= 100 ? 2 : 5,
@@ -10,14 +10,14 @@ export function formatPrice(value: number | null | undefined) {
 }
 
 export function formatNumber(value: number | null | undefined, digits = 2) {
-  if (typeof value !== "number" || Number.isNaN(value)) return "-"
+  if (typeof value !== "number" || Number.isNaN(value)) return "N/D"
   return new Intl.NumberFormat("es-AR", {
     maximumFractionDigits: digits,
   }).format(value)
 }
 
 export function formatPercent(value: number | null | undefined) {
-  if (typeof value !== "number" || Number.isNaN(value)) return "-"
+  if (typeof value !== "number" || Number.isNaN(value)) return "N/D"
   return `${formatNumber(value, 2)}%`
 }
 
@@ -35,5 +35,5 @@ export function getSignalTime(signal: SignalBoardItem) {
 }
 
 export function getStatusLabel(status: DataSourceStatus | string | null | undefined) {
-  return status ?? "unknown"
+  return status ?? "N/D"
 }

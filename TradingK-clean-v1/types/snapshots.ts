@@ -115,6 +115,9 @@ export interface SignalTradeMatchFlags {
   symbol: boolean | null
   direction: boolean | null
   entryPrice: boolean | null
+  entryDistance: boolean | null
+  strategy: boolean | null
+  account: boolean | null
   sl: boolean | null
   tp: boolean | null
 }
@@ -129,11 +132,20 @@ export interface SignalTradeLink {
   linkConfidence: number | null
   matchScoreTotal: number | null
   matchScoreMax: number | null
+  matchedBySymbol: boolean | null
+  matchedByDirection: boolean | null
+  matchedByTimeWindow: boolean | null
+  matchedByEntryDistance: boolean | null
+  matchedByStrategy: boolean | null
+  matchedByAccount: boolean | null
   matches: SignalTradeMatchFlags
   comparison: SignalTradeComparison
   signal: SignalTradeLinkSignalSnapshot | null
   signalPlan: SignalPlanSnapshot | null
   tradeExecution: TradeExecutionSnapshot | null
+  isTest: boolean
+  testCaseId: string | null
+  testCaseLabel: string | null
   createdAtUtc: string | null
   updatedAtUtc: string | null
   createdBy: string | null

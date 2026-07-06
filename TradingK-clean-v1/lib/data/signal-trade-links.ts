@@ -9,6 +9,23 @@ export const SIGNAL_TRADE_LINK_STATUSES: SignalTradeLinkStatus[] = [
   "rejected",
 ]
 
+export const ACTIVE_SIGNAL_LINK_FILTER_STATUSES: SignalTradeLinkStatus[] = [
+  "unlinked",
+  "suggested",
+  "auto_linked",
+  "ambiguous",
+]
+
+export const JOURNAL_LINK_FILTERS = [
+  "linked",
+  "unlinked",
+  "suggested",
+  "auto_linked",
+  "ambiguous",
+] as const
+
+export type JournalLinkFilter = (typeof JOURNAL_LINK_FILTERS)[number]
+
 export function linkStatusForSignal(signal: SignalBoardItem): SignalTradeLinkStatus {
   if (signal.tradeLink) return signal.tradeLink.linkStatus
   if (signal.linkedTrade || signal.linkedTradeId) return "auto_linked"
@@ -38,6 +55,23 @@ export function linkStatusTone(status: SignalTradeLinkStatus) {
   if (status === "suggested" || status === "ambiguous") return "warning"
   if (status === "rejected") return "danger"
   return "neutral"
+}
+
+export function journalLinkFilterLabel(filter: JournalLinkFilter) {
+  const labels: Record<JournalLinkFilter, string> = {
+    linked: "Con senal vinculada",
+    unlinked: "Sin senal vinculada",
+    suggested: "Sugerido",
+    auto_linked: "Auto-link",
+    ambiguous: "Ambiguo",
+  }
+  return labels[filter]
+}
+
+export function tradeMatchesJournalLinkFilter(trade: JournalTradeItem, filter: JournalLinkFilter) {
+  const status = linkStatusForTrade(trade)
+  if (filter === "linked") return status !== "unlinked"
+  return status === filter
 }
 
 export function linkTradeId(signal: SignalBoardItem) {

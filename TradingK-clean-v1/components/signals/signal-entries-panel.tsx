@@ -5,7 +5,7 @@ import { formatNumber, formatPercent, formatPrice } from "@/lib/data/format"
 function boolLabel(value: boolean | null | undefined) {
   if (value === true) return "Si"
   if (value === false) return "No"
-  return "-"
+  return "N/D"
 }
 
 export function SignalEntriesPanel({ signal }: { signal: SignalBoardItem }) {

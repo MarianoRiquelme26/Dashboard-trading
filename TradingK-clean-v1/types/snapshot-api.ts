@@ -221,6 +221,13 @@ export interface RawSignalTradeLinkItem {
   match_entry_price?: boolean | number | null
   match_sl?: boolean | number | null
   match_tp?: boolean | number | null
+  matched_by_symbol?: boolean | number | null
+  matched_by_direction?: boolean | number | null
+  matched_by_time_window?: boolean | number | null
+  matched_by_price_distance?: boolean | number | null
+  matched_by_entry_distance?: boolean | number | null
+  matched_by_strategy?: boolean | number | null
+  matched_by_account?: boolean | number | null
   time_delta_seconds?: number | null
   entry_delta_points?: number | null
   sl_delta_points?: number | null
@@ -228,6 +235,9 @@ export interface RawSignalTradeLinkItem {
   signal?: RawSignalTradeLinkSignal | null
   signal_plan?: RawSignalTradeLinkSignalPlan | null
   trade_execution?: RawSignalTradeLinkTradeExecution | null
+  is_test?: boolean | number | null
+  test_case_id?: string | null
+  test_case_label?: string | null
   created_at_utc?: string | null
   updated_at_utc?: string | null
   created_by?: string | null

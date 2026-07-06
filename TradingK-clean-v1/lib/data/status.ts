@@ -41,10 +41,19 @@ export function formatSnapshotTime(value: string | null | undefined) {
   return formatArgTime(value)
 }
 
+export function formatSnapshotLabel(
+  value: string | null | undefined,
+  hasVisibleData = false,
+) {
+  if (value) return formatArgTime(value)
+  if (hasVisibleData) return "Fuente real activa · timestamp no informado"
+  return "N/D"
+}
+
 export function formatArgTime(value: string | null | undefined) {
-  if (!value) return "sin generar"
+  if (!value) return "N/D"
   const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return "fecha invalida"
+  if (Number.isNaN(date.getTime())) return "Fecha invalida"
   const formatted = new Intl.DateTimeFormat("es-AR", {
     day: "2-digit",
     month: "2-digit",

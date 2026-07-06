@@ -1,7 +1,7 @@
 "use client"
 
 import type { SignalBoardItem } from "@/types/snapshots"
-import { SIGNAL_TRADE_LINK_STATUSES, linkStatusLabel } from "@/lib/data/signal-trade-links"
+import { ACTIVE_SIGNAL_LINK_FILTER_STATUSES, linkStatusLabel } from "@/lib/data/signal-trade-links"
 
 export interface SignalFilters {
   strategyName: string
@@ -110,7 +110,7 @@ export function SignalsFilters({
         <SelectFilter
           label="Vinculo trade"
           value={filters.linkStatus}
-          options={SIGNAL_TRADE_LINK_STATUSES.map(linkStatusLabel)}
+          options={ACTIVE_SIGNAL_LINK_FILTER_STATUSES.map(linkStatusLabel)}
           onChange={(value) => update("linkStatus", value)}
         />
         <label className="block">

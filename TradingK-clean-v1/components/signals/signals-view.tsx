@@ -6,7 +6,7 @@ import { DataState } from "@/components/data-status/data-state"
 import { DataStatusBadge } from "@/components/data-status/data-status-badge"
 import { useNavigation } from "@/components/navigation-context"
 import { linkStatusForSignal, linkStatusLabel, mergeSignalsWithLinks } from "@/lib/data/signal-trade-links"
-import { formatSnapshotTime } from "@/lib/data/status"
+import { formatSnapshotLabel } from "@/lib/data/status"
 import { useSignalTradeLinks, useSignalsBoard } from "@/lib/data/use-snapshot-query"
 import type { SignalBoardItem } from "@/types/snapshots"
 import { SignalDetailDrawer } from "./signal-detail-drawer"
@@ -74,7 +74,7 @@ export function SignalsView() {
             <DataStatusBadge status={status} generatedAtUtc={data?.generatedAtUtc} />
           </div>
           <p className="text-muted-foreground">Senales detectadas por bots. No son operaciones ejecutadas.</p>
-          <p className="mt-1 text-xs text-muted-foreground">Ultimo snapshot: {formatSnapshotTime(data?.generatedAtUtc)}</p>
+          <p className="mt-1 text-xs text-muted-foreground">Ultimo snapshot: {formatSnapshotLabel(data?.generatedAtUtc, (data?.items.length ?? 0) > 0)}</p>
         </div>
       </div>
 
