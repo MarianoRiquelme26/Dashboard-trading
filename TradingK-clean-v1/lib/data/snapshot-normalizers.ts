@@ -303,6 +303,9 @@ export function normalizeSignalsRecent(raw: unknown): SignalsRecentSnapshot {
       telegramSent: asBoolean(item.telegram_sent),
       linkedTradeId: asString(item.linked_trade_id),
       primaryEntry: normalizeEntry(item.primary_entry),
+      isTest: asBoolean(item.is_test),
+      testCaseId: asString(item.test_case_id),
+      testCaseLabel: asString(item.test_case_label),
     }))
   const meta = snapshotMetaFromEnvelope(envelope, responseMeta, items.length)
 
@@ -344,6 +347,10 @@ export function normalizeSignalsBoard(raw: unknown): SignalsBoardSnapshot {
         linkedTrade,
         linkedTradeId: asString(signal.linked_trade_id) ?? linkedTrade?.tradeId ?? null,
         tradeLink: null,
+        tradeLinks: [],
+        isTest: asBoolean(signal.is_test),
+        testCaseId: asString(signal.test_case_id),
+        testCaseLabel: asString(signal.test_case_label),
         warnings: [],
         raw: item,
       }
@@ -394,6 +401,10 @@ export function normalizeJournalTrades(raw: unknown): JournalTradesSnapshot {
       ruleComplianceScore: asNumber(item.rule_compliance_score),
       journalNotes: asString(item.journal_notes),
       tradeLink: null,
+      tradeLinks: [],
+      isTest: asBoolean(item.is_test),
+      testCaseId: asString(item.test_case_id),
+      testCaseLabel: asString(item.test_case_label),
     }))
   const meta = snapshotMetaFromEnvelope(envelope, responseMeta, items.length)
 

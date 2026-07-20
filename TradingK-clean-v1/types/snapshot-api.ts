@@ -46,6 +46,9 @@ export interface RawSignalsRecentItem {
   telegram_sent?: boolean | number | null
   linked_trade_id?: string | null
   primary_entry?: RawSignalPrimaryEntry | null
+  is_test?: boolean | number | null
+  test_case_id?: string | null
+  test_case_label?: string | null
 }
 
 export interface RawSignalCore {
@@ -63,6 +66,9 @@ export interface RawSignalCore {
   operation_status?: string | null
   result_status?: string | null
   linked_trade_id?: string | null
+  is_test?: boolean | number | null
+  test_case_id?: string | null
+  test_case_label?: string | null
 }
 
 export interface RawSignalEntry extends RawSignalPrimaryEntry {
@@ -156,6 +162,9 @@ export interface RawJournalTradeItem {
   mistake_type?: string | null
   rule_compliance_score?: number | null
   journal_notes?: string | null
+  is_test?: boolean | number | null
+  test_case_id?: string | null
+  test_case_label?: string | null
 }
 
 export interface RawSystemStatusResponse {

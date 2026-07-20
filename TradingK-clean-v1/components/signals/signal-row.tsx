@@ -3,7 +3,7 @@
 import type { SignalBoardItem } from "@/types/snapshots"
 import { StatusPill, toneForDirection, toneForStatus } from "@/components/data-status/status-pill"
 import { formatNumber, formatPrice, getPrimaryEntry } from "@/lib/data/format"
-import { linkStatusForSignal, linkStatusLabel, linkStatusTone, linkTradeId } from "@/lib/data/signal-trade-links"
+import { hasExplicitTestMetadata, linkStatusForSignal, linkStatusLabel, linkStatusTone, linkTradeId } from "@/lib/data/signal-trade-links"
 import { formatArgTime } from "@/lib/data/status"
 import { cn } from "@/lib/utils"
 
@@ -61,7 +61,10 @@ export function SignalRow({
         <StatusPill label={operationStatus} tone={toneForStatus(operationStatus)} />
       </div>
       <div className="min-w-0 space-y-1">
-        <StatusPill label={linkStatusLabel(linkStatus)} tone={linkStatusTone(linkStatus)} />
+        <div className="flex flex-wrap gap-1">
+          <StatusPill label={linkStatusLabel(linkStatus)} tone={linkStatusTone(linkStatus)} />
+          {hasExplicitTestMetadata(signal) && <StatusPill label="TEST" tone="mock" />}
+        </div>
         <div className="truncate font-mono text-xs text-muted-foreground">{linkedTradeLabel(signal)}</div>
       </div>
       <div className="font-medium text-primary">Ver detalle</div>
@@ -120,6 +123,7 @@ export function SignalMobileCard({
         <StatusPill label={`Score ${scoreLabel(signal)}`} tone="info" />
         <StatusPill label={operationStatus} tone={toneForStatus(operationStatus)} />
         <StatusPill label={linkStatusLabel(linkStatus)} tone={linkStatusTone(linkStatus)} />
+        {hasExplicitTestMetadata(signal) && <StatusPill label="TEST" tone="mock" />}
         {signal.entries.length > 1 && <StatusPill label={`${signal.entries.length} bases`} tone="neutral" />}
       </div>
     </button>

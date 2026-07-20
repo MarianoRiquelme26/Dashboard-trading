@@ -1,7 +1,7 @@
 import type { JournalTradeItem } from "@/types/snapshots"
 import { StatusPill, toneForDirection, toneForStatus } from "@/components/data-status/status-pill"
 import { formatNumber, formatPrice } from "@/lib/data/format"
-import { linkStatusForTrade, linkStatusLabel, linkStatusTone } from "@/lib/data/signal-trade-links"
+import { hasExplicitTestMetadata, linkStatusForTrade, linkStatusLabel, linkStatusTone } from "@/lib/data/signal-trade-links"
 import { formatArgTime } from "@/lib/data/status"
 import { cn } from "@/lib/utils"
 
@@ -71,7 +71,10 @@ export function TradeTable({
               <StatusPill label={trade.tradeStatus ?? "N/D"} tone={toneForStatus(trade.tradeStatus)} />
             </div>
             <div className="min-w-0 space-y-1">
-              <StatusPill label={linkStatusLabel(linkStatusForTrade(trade))} tone={linkStatusTone(linkStatusForTrade(trade))} />
+              <div className="flex flex-wrap gap-1">
+                <StatusPill label={linkStatusLabel(linkStatusForTrade(trade))} tone={linkStatusTone(linkStatusForTrade(trade))} />
+                {hasExplicitTestMetadata(trade) && <StatusPill label="TEST" tone="mock" />}
+              </div>
               <div className="truncate font-mono text-xs text-muted-foreground">{trade.linkedSignalEventId ?? "N/D"}</div>
             </div>
             <div className="font-mono text-xs">{trade.closedAtUtc ? formatArgTime(trade.closedAtUtc) : "N/D"}</div>
@@ -109,6 +112,7 @@ export function TradeTable({
             </div>
             <div className="mt-3 grid gap-1 text-sm text-muted-foreground">
               <p>Vinculo: {linkStatusLabel(linkStatusForTrade(trade))}</p>
+              {hasExplicitTestMetadata(trade) && <p>Test: {trade.testCaseId}</p>}
               <p>Salida: {trade.closedAtUtc ? formatArgTime(trade.closedAtUtc) : "N/D"}</p>
               <p>Resultado R: {trade.resultR === null ? "N/D" : formatNumber(trade.resultR, 2)}</p>
               <p>Neto: {trade.netProfit === null ? "N/D" : formatNumber(trade.netProfit, 2)}</p>

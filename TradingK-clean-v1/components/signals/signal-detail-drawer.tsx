@@ -3,6 +3,7 @@
 import type { SignalBoardItem } from "@/types/snapshots"
 import { StatusPill, toneForDirection, toneForStatus } from "@/components/data-status/status-pill"
 import { formatNumber } from "@/lib/data/format"
+import { hasExplicitTestMetadata, testCaseText } from "@/lib/data/signal-trade-links"
 import { SignalConditionsPanel } from "./signal-conditions-panel"
 import { SignalDebugPanel } from "./signal-debug-panel"
 import { SignalEntriesPanel } from "./signal-entries-panel"
@@ -49,12 +50,14 @@ export function SignalDetailDrawer({ signal }: { signal: SignalBoardItem | null 
           </h3>
           <StatusPill label={(signal.direction ?? "N/D").toUpperCase()} tone={toneForDirection(signal.direction ?? "")} />
           <StatusPill label={signal.timeframeSignal ?? "N/D"} tone="neutral" />
+          {hasExplicitTestMetadata(signal) && <StatusPill label="TEST" tone="mock" />}
         </div>
         <div className="mt-2 flex flex-wrap gap-2">
           <StatusPill label={`Score ${formatNumber(signal.scoreTotal, 1)}`} tone="info" />
           <StatusPill label={operationStatus} tone={toneForStatus(operationStatus)} />
         </div>
         <p className="mt-2 break-all text-sm text-muted-foreground">eventId: {signal.eventId}</p>
+        {hasExplicitTestMetadata(signal) && <p className="mt-1 text-sm text-muted-foreground">Test case: {testCaseText(signal)}</p>}
       </div>
       <SignalTelegramPanel signal={signal} />
       <SignalEntriesPanel signal={signal} />

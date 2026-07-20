@@ -173,6 +173,9 @@ export interface RecentSignalItem {
   telegramSent: boolean
   linkedTradeId: string | null
   primaryEntry: SignalEntry | null
+  isTest: boolean
+  testCaseId: string | null
+  testCaseLabel: string | null
 }
 
 export interface SignalsRecentSnapshot extends SnapshotMeta {
@@ -201,6 +204,10 @@ export interface SignalBoardItem {
   linkedTrade: LinkedTrade | null
   linkedTradeId: string | null
   tradeLink?: SignalTradeLink | null
+  tradeLinks?: SignalTradeLink[]
+  isTest: boolean
+  testCaseId: string | null
+  testCaseLabel: string | null
   warnings: string[]
   raw: unknown
 }
@@ -240,6 +247,10 @@ export interface JournalTradeItem {
   ruleComplianceScore: number | null
   journalNotes: string | null
   tradeLink?: SignalTradeLink | null
+  tradeLinks?: SignalTradeLink[]
+  isTest: boolean
+  testCaseId: string | null
+  testCaseLabel: string | null
 }
 
 export interface JournalTradesSnapshot extends SnapshotMeta {
