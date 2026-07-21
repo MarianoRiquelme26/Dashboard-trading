@@ -7,11 +7,11 @@ interface StaleStateProps {
 
 export function StaleState({ generatedAtUtc }: StaleStateProps) {
   return (
-    <div className="flex items-start gap-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-4">
-      <Clock3 className="mt-0.5 h-5 w-5 shrink-0 text-amber-300" />
+    <div className="flex items-start gap-3 rounded-lg border border-amber-300 bg-amber-50 p-4 dark:border-amber-500/30 dark:bg-amber-500/10">
+      <Clock3 className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-300" />
       <div>
-        <h3 className="font-heading text-sm font-semibold text-amber-100">STALE</h3>
-        <p className="mt-1 text-sm text-amber-100/80">
+        <h3 className="font-heading text-sm font-semibold text-amber-900 dark:text-amber-100">STALE</h3>
+        <p className="mt-1 text-sm text-amber-800 dark:text-amber-100/80">
           El snapshot esta vencido. Se muestran los ultimos datos disponibles. Ultima generacion:{" "}
           {formatArgTime(generatedAtUtc)}.
         </p>

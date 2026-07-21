@@ -13,7 +13,7 @@ export function SnapshotStatusBanner() {
   const staleAfterSeconds = system.staleAfterSeconds ?? recent.staleAfterSeconds
 
   return (
-    <div className={isStale ? "rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3" : "rounded-lg border border-border bg-secondary/30 px-4 py-3"}>
+    <div className={isStale ? "rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 dark:border-amber-500/30 dark:bg-amber-500/10" : "rounded-lg border border-border bg-secondary/30 px-4 py-3"}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-sm font-medium text-foreground">{isStale ? "Snapshot STALE" : "Arquitectura de datos"}</p>
@@ -24,7 +24,7 @@ export function SnapshotStatusBanner() {
             No hay conexion directa a SQLite Atlas.
           </p>
           {isStale && (
-            <p className="mt-2 text-sm text-amber-100">
+            <p className="mt-2 text-sm text-amber-800 dark:text-amber-100">
               Datos del sistema desactualizados. Se muestran los ultimos datos disponibles. Ultima actualizacion:{" "}
               {formatSnapshotLabel(system.generatedAtUtc ?? recent.generatedAtUtc, Boolean(system.data ?? recent.data))}
               {ageSeconds !== null && ageSeconds !== undefined ? ` - edad ${ageSeconds}s` : ""}

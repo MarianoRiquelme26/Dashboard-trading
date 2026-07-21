@@ -11,13 +11,13 @@
   --card-foreground: #0f172a;
   --popover: #ffffff;
   --popover-foreground: #0f172a;
-  --primary: #0ea5e9;
+  --primary: #0369a1;
   --primary-foreground: #ffffff;
   --secondary: #f1f5f9;
   --secondary-foreground: #475569;
   --muted: #f1f5f9;
   --muted-foreground: #64748b;
-  --accent: #0ea5e9;
+  --accent: #0369a1;
   --accent-foreground: #ffffff;
   --destructive: #dc2626;
   --destructive-foreground: #fef2f2;
@@ -25,7 +25,7 @@
   --success-foreground: #f0fdf4;
   --border: #e2e8f0;
   --input: #f1f5f9;
-  --ring: #0ea5e9;
+  --ring: #0284c7;
   --chart-1: #0ea5e9;
   --chart-2: #16a34a;
   --chart-3: #dc2626;
@@ -34,12 +34,12 @@
   --radius: 0.75rem;
   --sidebar: #ffffff;
   --sidebar-foreground: #0f172a;
-  --sidebar-primary: #0ea5e9;
+  --sidebar-primary: #0369a1;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: rgba(14, 165, 233, 0.1);
-  --sidebar-accent-foreground: #0ea5e9;
+  --sidebar-accent-foreground: #0369a1;
   --sidebar-border: #e2e8f0;
-  --sidebar-ring: #0ea5e9;
+  --sidebar-ring: #0284c7;
   
   /* Light mode specific */
   --glass-bg: rgba(255, 255, 255, 0.9);
@@ -49,7 +49,7 @@
   --text-muted: #64748b;
   --shadow-color: rgba(15, 23, 42, 0.08);
   --circuit-path: #334155;
-  --circuit-active: #0ea5e9;
+  --circuit-active: #0284c7;
   --circuit-grid: #e2e8f0;
 }
 

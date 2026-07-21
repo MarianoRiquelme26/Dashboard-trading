@@ -12,7 +12,7 @@ export function RecentErrorsCard() {
   return (
     <section className="glass rounded-lg p-5">
       <div className="mb-3 flex items-center gap-2">
-        <AlertTriangle className="h-4 w-4 text-amber-300" />
+        <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-300" />
         <h3 className="font-heading text-lg font-semibold text-foreground">Ultimos errores</h3>
       </div>
       {isLoading ? (

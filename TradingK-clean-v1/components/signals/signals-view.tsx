@@ -104,7 +104,7 @@ export function SignalsView() {
             </div>
           )}
           {linksQuery.status === "error" && (
-            <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-100">
+            <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-100">
               No se pudo cargar signal-trade-links. Signals queda visible sin inferir vinculos nuevos.
             </div>
           )}

@@ -19,7 +19,7 @@ function WarningsPanel({ signal }: { signal: SignalBoardItem }) {
       ) : (
         <ul className="mt-3 space-y-2 text-sm text-foreground/80">
           {signal.warnings.map((warning) => (
-            <li key={warning} className="rounded-md bg-amber-500/10 p-2 text-amber-100">
+            <li key={warning} className="rounded-md border border-amber-200 bg-amber-50 p-2 text-amber-800 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-100">
               {warning}
             </li>
           ))}

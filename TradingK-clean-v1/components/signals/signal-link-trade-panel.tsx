@@ -117,7 +117,7 @@ export function SignalLinkTradePanel({ signal }: { signal: SignalBoardItem }) {
       </div>
 
       {hasSignalTest && (
-        <div className="mt-4 rounded-md border border-fuchsia-500/30 bg-fuchsia-500/10 p-3">
+        <div className="mt-4 rounded-md border border-fuchsia-300 bg-fuchsia-50 p-3 dark:border-fuchsia-500/30 dark:bg-fuchsia-500/10">
           <Field label="Test case" value={testCaseText(signal)} />
         </div>
       )}
